@@ -173,3 +173,17 @@ model PaymentLog {
 
   @@index([orderId])
 }
+
+model ActionLog {
+  id         String   @id @default(cuid())
+  action     String
+  actorId    String?
+  actorType  String
+  entityType String
+  entityId   String?
+  metadata   Json?
+  createdAt  DateTime @default(now())
+
+  @@index([entityType, entityId])
+  @@index([createdAt])
+}
