@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useMemo } from 'react';
+import { useState, useMemo, useEffect } from 'react';
 import {
   Clock,
   Loader2,
@@ -71,8 +71,23 @@ function formatRemaining(remaining: number | null, expired: boolean): string {
 export default function VmStatusCard({ vm, featured = false }: VmStatusCardProps) {
   const [copyStatus, setCopyStatus] = useState<'idle' | 'copied' | 'error'>('idle');
   const [loading, setLoading] = useState(false);
-  const remaining = getRemainingMinutes({ readyAt: vm.readyAt, expiresAt: vm.expiresAt });
+  const [remaining, setRemaining] = useState<number | null>(() =>
+    getRemainingMinutes({ readyAt: vm.readyAt, expiresAt: vm.expiresAt })
+  );
   const expired = isExpired({ expiresAt: vm.expiresAt });
+
+  // Client-side countdown: every 60s normally, every 1s when < 5 min remaining
+  useEffect(() => {
+    if (vm.readyAt == null || vm.expiresAt == null) return;
+    const compute = () =>
+      getRemainingMinutes({ readyAt: vm.readyAt, expiresAt: vm.expiresAt });
+    setRemaining(compute());
+    const id = setInterval(() => {
+      const next = compute();
+      setRemaining(next);
+    }, remaining != null && remaining < 5 && remaining > 0 ? 1000 : 60000);
+    return () => clearInterval(id);
+  }, [vm.readyAt, vm.expiresAt, remaining]);
   const isProvisioning = vm.status === 'provisioning' || vm.status === 'payment_confirmed';
   const isActive = vm.status === 'vm_ready' || vm.status === 'expiring';
   const canConnect = vm.status === 'vm_ready' && vm.connectionState === 'ready';
@@ -238,23 +253,35 @@ export default function VmStatusCard({ vm, featured = false }: VmStatusCardProps
           {timeProgress !== null && vm.readyAt && vm.expiresAt && (
             <div className="mt-6">
               <div className="flex items-baseline justify-between gap-2">
-                <span className="text-sm font-medium text-slate-600">Tempo de sessão</span>
+                <span className="text-sm font-medium text-slate-400">Tempo restante</span>
                 <span
-                  className={`tabular-nums font-semibold ${
-                    expired || (timeProgress ?? 0) >= 90
-                      ? 'text-red-600'
-                      : (timeProgress ?? 0) >= 70
-                        ? 'text-orange-600'
-                        : 'text-slate-900'
+                  className={`tabular-nums ${
+                    featured ? 'text-2xl font-bold' : 'text-lg font-semibold'
+                  } ${
+                    expired || (remaining ?? 0) === 0
+                      ? 'text-red-400'
+                      : (remaining ?? 999) < 30
+                        ? 'text-red-400 animate-pulse motion-reduce:animate-none'
+                        : (remaining ?? 999) < 60
+                          ? 'text-orange-400'
+                          : expired || (timeProgress ?? 0) >= 90
+                            ? 'text-red-400'
+                            : (timeProgress ?? 0) >= 70
+                              ? 'text-orange-400'
+                              : 'text-white'
                   }`}
                 >
                   {formatRemaining(remaining, expired)}
                 </span>
               </div>
-              <div className="mt-2 h-2.5 w-full overflow-hidden rounded-full bg-slate-200/80">
+              <div
+                className={`mt-2 w-full overflow-hidden rounded-full bg-white/10 ${
+                  featured ? 'h-3' : 'h-2.5'
+                }`}
+              >
                 <div
                   className={`h-full rounded-full transition-all duration-500 ease-out ${progressBarColor}`}
-                  style={{ width: `${Math.min(100, timeProgress)}%` }}
+                  style={{ width: `${Math.min(100, timeProgress ?? 0)}%` }}
                 />
               </div>
             </div>
