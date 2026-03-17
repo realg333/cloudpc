@@ -18,7 +18,10 @@ export async function POST(request: NextRequest) {
     return NextResponse.redirect(new URL('/login?error=invalid', request.url));
   }
   if (!user.emailVerifiedAt) {
-    return NextResponse.redirect(new URL('/login?error=unverified', request.url));
+    const url = new URL('/login', request.url);
+    url.searchParams.set('error', 'unverified');
+    url.searchParams.set('email', email);
+    return NextResponse.redirect(url);
   }
 
   const valid = await verifyPassword(password, user.passwordHash);

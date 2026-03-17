@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { prisma } from '@/lib/db';
 import { hashPassword } from '@/lib/auth/password';
+import { sendVerificationEmail } from '@/lib/email';
 import { randomBytes } from 'crypto';
 
 const VERIFICATION_EXPIRY_HOURS = 24;
@@ -40,7 +41,8 @@ export async function POST(request: NextRequest) {
 
     const verifyUrl = new URL('/verify-email', request.url);
     verifyUrl.searchParams.set('token', token);
-    console.log('[stub] Verification link for', email, ':', verifyUrl.toString());
+
+    await sendVerificationEmail({ to: email, verifyUrl: verifyUrl.toString() });
 
     return NextResponse.redirect(new URL('/login?signup=1', request.url));
   } catch (e) {

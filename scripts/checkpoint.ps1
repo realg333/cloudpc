@@ -7,7 +7,7 @@ param(
 )
 
 $ErrorActionPreference = "Stop"
-$ProjectRoot = $PSScriptRoot
+$ProjectRoot = Split-Path -Parent $PSScriptRoot  # scripts/ is under project root
 $CheckpointDir = Join-Path $ProjectRoot ".checkpoint"
 
 # Ensure .checkpoint exists
@@ -27,6 +27,8 @@ $HasGit = $false
 $gitCmd = Get-Command git -ErrorAction SilentlyContinue
 if ($gitCmd) {
     Push-Location $ProjectRoot
+    $prevEAP = $ErrorActionPreference
+    $ErrorActionPreference = "Continue"  # Git writes warnings to stderr; Stop would treat them as errors
     try {
         $gitRoot = git rev-parse --show-toplevel 2>$null
         if ($LASTEXITCODE -eq 0) {
@@ -35,9 +37,9 @@ if ($gitCmd) {
             if (-not $Branch) { $Branch = "detached" }
             $Commit = git rev-parse --short HEAD 2>$null
             if (-not $Commit) { $Commit = "unknown" }
-            $GitStatus = git status 2>&1 | Out-String
-            $diffOut = git diff --stat 2>&1 | Out-String
-            $diffStaged = git diff --cached --stat 2>&1 | Out-String
+            $GitStatus = git status 2>$null | Out-String
+            $diffOut = git diff --stat 2>$null | Out-String
+            $diffStaged = git diff --cached --stat 2>$null | Out-String
             if ($diffOut.Trim() -or $diffStaged.Trim()) {
                 $DiffSummary = "Staged:" + [Environment]::NewLine + $diffStaged + "Unstaged:" + [Environment]::NewLine + $diffOut
             } else {
@@ -45,6 +47,7 @@ if ($gitCmd) {
             }
         }
     } finally {
+        $ErrorActionPreference = $prevEAP
         Pop-Location
     }
 }
@@ -134,6 +137,8 @@ Write-Host "Checkpoint created: $HandoffPath" -ForegroundColor Green
 # --- Git operations ---
 if ($HasGit) {
     Push-Location $ProjectRoot
+    $prevEAP = $ErrorActionPreference
+    $ErrorActionPreference = "Continue"
     try {
         git add .
         if ($LASTEXITCODE -ne 0) {
@@ -155,6 +160,7 @@ if ($HasGit) {
             }
         }
     } finally {
+        $ErrorActionPreference = $prevEAP
         Pop-Location
     }
 } else {

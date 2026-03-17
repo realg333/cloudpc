@@ -1,6 +1,6 @@
 'use client';
 
-import { Suspense } from 'react';
+import { Suspense, useState } from 'react';
 import { useSearchParams } from 'next/navigation';
 import Link from 'next/link';
 
@@ -9,6 +9,13 @@ function LoginForm() {
   const error = searchParams.get('error');
   const verified = searchParams.get('verified');
   const signup = searchParams.get('signup');
+  const emailParam = searchParams.get('email') ?? '';
+
+  const [resendEmail, setResendEmail] = useState(emailParam);
+  const [resendStatus, setResendStatus] = useState<'idle' | 'loading' | 'success' | 'error'>('idle');
+  const [resendMessage, setResendMessage] = useState('');
+
+  const showResend = signup === '1' || error === 'unverified';
 
   const errorMessage =
     error === 'invalid'
@@ -20,6 +27,32 @@ function LoginForm() {
           : error === '2fa_expired'
             ? 'Sessão expirada. Faça login novamente.'
             : null;
+
+  async function handleResend(e: React.FormEvent) {
+    e.preventDefault();
+    if (!resendEmail.trim()) return;
+    setResendStatus('loading');
+    setResendMessage('');
+    try {
+      const formData = new FormData();
+      formData.set('email', resendEmail.trim().toLowerCase());
+      const res = await fetch('/api/auth/resend-verification', {
+        method: 'POST',
+        body: formData,
+      });
+      const data = await res.json().catch(() => ({}));
+      if (res.ok) {
+        setResendStatus('success');
+        setResendMessage('E-mail reenviado. Verifique sua caixa de entrada e spam.');
+      } else {
+        setResendStatus('error');
+        setResendMessage(data.error ?? 'Erro ao reenviar. Tente novamente.');
+      }
+    } catch {
+      setResendStatus('error');
+      setResendMessage('Erro de conexão. Tente novamente.');
+    }
+  }
 
   return (
     <div className="mx-auto max-w-md">
@@ -43,6 +76,7 @@ function LoginForm() {
             name="email"
             type="email"
             autoComplete="email"
+            defaultValue={emailParam}
             className="w-full rounded border border-gray-300 px-3 py-2 focus:border-indigo-500 focus:outline-none focus:ring-1 focus:ring-indigo-500"
             required
           />
@@ -67,6 +101,36 @@ function LoginForm() {
           Entrar
         </button>
       </form>
+
+      {showResend && (
+        <div className="mt-6 rounded-lg border border-gray-200 bg-gray-50 p-4">
+          <p className="mb-3 text-sm font-medium text-gray-700">Não recebeu o e-mail de ativação?</p>
+          <form onSubmit={handleResend} className="flex gap-2">
+            <input
+              type="email"
+              value={resendEmail}
+              onChange={(e) => setResendEmail(e.target.value)}
+              placeholder="Seu e-mail"
+              className="flex-1 rounded border border-gray-300 px-3 py-2 text-sm focus:border-indigo-500 focus:outline-none focus:ring-1 focus:ring-indigo-500"
+              required
+            />
+            <button
+              type="submit"
+              disabled={resendStatus === 'loading'}
+              className="rounded bg-gray-700 px-4 py-2 text-sm font-medium text-white hover:bg-gray-800 disabled:opacity-60"
+            >
+              {resendStatus === 'loading' ? 'Enviando...' : 'Reenviar'}
+            </button>
+          </form>
+          {resendStatus === 'success' && (
+            <p className="mt-2 text-sm text-green-600">{resendMessage}</p>
+          )}
+          {resendStatus === 'error' && (
+            <p className="mt-2 text-sm text-red-600">{resendMessage}</p>
+          )}
+        </div>
+      )}
+
       <p className="mt-4 text-center text-sm text-gray-600">
         Não tem conta? <Link href="/signup" className="text-indigo-600 hover:underline">Criar conta</Link>
       </p>
