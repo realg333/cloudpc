@@ -1,17 +1,17 @@
 ---
 gsd_state_version: 1.0
-milestone: null
-milestone_name: null
-status: between_milestones
-stopped_at: v1.1 milestone complete
+milestone: v1.2
+milestone_name: Real Infra & Payments Integration
+status: defining_requirements
+stopped_at: v1.2 milestone started
 last_updated: "2026-03-17"
-last_activity: 2026-03-17 — v1.1 milestone completed and archived
+last_activity: 2026-03-17 — Milestone v1.2 started
 progress:
-  total_phases: 7
-  completed_phases: 7
-  total_plans: 20
-  completed_plans: 20
-  percent: 100
+  total_phases: 0
+  completed_phases: 0
+  total_plans: 0
+  completed_plans: 0
+  percent: 0
 ---
 
 [# Project State: Cloud Gaming VPS Brazil]
@@ -22,12 +22,14 @@ See: `.planning/PROJECT.md` (updated 2026-03-17)
 
 **Core value:** Users can quickly and reliably get a high‑performance Windows cloud PC with GPU, paid upfront in a fixed‑time package, and connect through a simple web dashboard with minimal friction and manual intervention.
 
-**Current focus:** Planning next milestone. Run `$gsd-new-milestone` to define v1.2 or v2.0.
+**Current focus:** v1.2 Real Infra & Payments Integration — defining requirements
 
 ## Current Position
 
-**Status:** Between milestones
-**Last activity:** 2026-03-17 — v1.1 Frontend Polish completed and archived
+**Phase:** Not started (defining requirements)
+**Plan:** —
+**Status:** Defining requirements
+**Last activity:** 2026-03-17 — Milestone v1.2 started
 
 **Shipped:**
 - v1.0 MVP — 5 phases, 15 plans (2026-03-17)

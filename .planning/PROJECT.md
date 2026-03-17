@@ -12,7 +12,17 @@ Users can quickly and reliably get a high‑performance Windows cloud PC with GP
 
 **Shipped:** v1.0 MVP (2026-03-17), v1.1 Frontend Polish (2026-03-17)
 
-**Next:** Planning next milestone. Run `$gsd-new-milestone` to define v1.2 or v2.0.
+## Current Milestone: v1.2 Real Infra & Payments Integration
+
+**Goal:** Turn the current system into a fully working, revenue-generating product with real payments, real VM provisioning, and end-to-end validated flow.
+
+**Target features:**
+- Vultr real integration (API key, MachineProfiles mapping, instance lifecycle, Parsec readiness)
+- Payment gateway integration (PIX + crypto via existing gateway, webhooks, idempotent handling)
+- End-to-end flow validation (full real flow, failure cases, no orphan orders/VMs)
+- Environment & deployment readiness (.env, CRON, webhook reachability)
+- Cost control & safety (1 VM per user, guardrails, teardown reliability)
+- Observability & debugging (logs for payments/provisioning/teardown/admin, admin visibility)
 
 ## Requirements
 
@@ -32,7 +42,12 @@ Users can quickly and reliably get a high‑performance Windows cloud PC with GP
 
 <!-- Current scope. Building toward these. -->
 
-- (None — v1.1 complete. Define next milestone with `$gsd-new-milestone`.)
+- Real Vultr integration with production API, MachineProfiles mapping, and Parsec-ready instances — v1.2
+- Real payment gateway (PIX + crypto) with webhook validation and idempotent order handling — v1.2
+- End-to-end validated flow (payment → provisioning → teardown) with failure-case handling — v1.2
+- Production deployment readiness (env, CRON, webhooks reachable) — v1.2
+- Cost control and safety (1 VM per user, guardrails, reliable teardown) — v1.2
+- Observability and debugging (structured logs, admin visibility) — v1.2
 
 ### Out of Scope
 
@@ -82,4 +97,4 @@ Users can quickly and reliably get a high‑performance Windows cloud PC with GP
 | Countdown 60s/1s when <5 min remaining | Real-time urgency; motion-reduce respected | ✓ Good — Phase 7 |
 
 ---
-*Last updated: 2026-03-17 after v1.1 milestone*
+*Last updated: 2026-03-17 after v1.2 milestone start*
