@@ -123,7 +123,7 @@ export default function DashboardVmList({ initialVms }: DashboardVmListProps) {
           <h2 id="other-vms-heading" className="mb-4 text-sm font-semibold uppercase tracking-wider text-slate-400">
             Outras máquinas
           </h2>
-          <ul className="space-y-4" role="list" aria-label="Outras máquinas virtuais">
+          <ul className="space-y-5" role="list" aria-labelledby="other-vms-heading" aria-label="Outras máquinas virtuais">
             {otherVms.map((vm) => (
               <li key={vm.id}>
                 <VmStatusCard
