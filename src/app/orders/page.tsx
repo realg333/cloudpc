@@ -22,6 +22,35 @@ function statusLabel(status: string): string {
   }
 }
 
+function vmStatusLabel(status: string): string {
+  switch (status) {
+    case 'payment_confirmed':
+      return 'Confirmando pagamento';
+    case 'provisioning':
+      return 'Provisionando';
+    case 'vm_ready':
+      return 'Pronto';
+    case 'expiring':
+      return 'Expirando';
+    case 'destroying':
+      return 'Encerrando';
+    case 'destroyed':
+      return 'Encerrado';
+    case 'failed':
+      return 'Falhou';
+    default:
+      return status;
+  }
+}
+
+const dateOpts: Intl.DateTimeFormatOptions = {
+  day: '2-digit',
+  month: '2-digit',
+  year: 'numeric',
+  hour: '2-digit',
+  minute: '2-digit',
+};
+
 export default async function OrdersPage() {
   const session = await getSessionFromCookies();
   if (!session) {
@@ -33,6 +62,7 @@ export default async function OrdersPage() {
     include: {
       plan: true,
       machineProfile: true,
+      provisionedVm: true,
     },
     orderBy: { createdAt: 'desc' },
   });
@@ -59,6 +89,7 @@ export default async function OrdersPage() {
                 <th className="px-4 py-3 text-left text-sm font-medium text-gray-700">Plano</th>
                 <th className="px-4 py-3 text-left text-sm font-medium text-gray-700">Perfil</th>
                 <th className="px-4 py-3 text-left text-sm font-medium text-gray-700">Status</th>
+                <th className="px-4 py-3 text-left text-sm font-medium text-gray-700">Máquina</th>
                 <th className="px-4 py-3 text-left text-sm font-medium text-gray-700">Ações</th>
               </tr>
             </thead>
@@ -78,6 +109,26 @@ export default async function OrdersPage() {
                   <td className="px-4 py-3 text-sm text-gray-900">{order.machineProfile.name}</td>
                   <td className="px-4 py-3 text-sm text-gray-600">
                     {statusLabel(order.status)}
+                  </td>
+                  <td className="px-4 py-3 text-sm text-gray-600">
+                    {order.provisionedVm ? (
+                      <>
+                        Máquina: {vmStatusLabel(order.provisionedVm.status)} — Iniciado em{' '}
+                        {order.provisionedVm.readyAt
+                          ? new Date(order.provisionedVm.readyAt).toLocaleDateString('pt-BR', dateOpts)
+                          : '—'}
+                        , Encerrado em{' '}
+                        {(order.provisionedVm.destroyedAt ?? order.provisionedVm.expiresAt)
+                          ? new Date(
+                              order.provisionedVm.destroyedAt ?? order.provisionedVm.expiresAt!
+                            ).toLocaleDateString('pt-BR', dateOpts)
+                          : '—'}
+                      </>
+                    ) : order.status !== 'pending_payment' ? (
+                      'Provisionando...'
+                    ) : (
+                      '—'
+                    )}
                   </td>
                   <td className="px-4 py-3 text-sm">
                     {order.status === 'pending_payment' && (

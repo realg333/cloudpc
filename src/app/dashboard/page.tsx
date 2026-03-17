@@ -34,14 +34,22 @@ export default async function DashboardPage() {
     <div className="mx-auto max-w-4xl">
       <h1 className="mb-2 text-2xl font-bold text-gray-900">Minhas Máquinas</h1>
       <p className="mb-6 text-gray-600">
-        Suas VMs ativas e recentes. O status é atualizado automaticamente.
+        Suas VMs ativas e recentes. O status é atualizado automaticamente.{' '}
+        <Link href="/orders" className="text-indigo-600 hover:underline">
+          Ver histórico de pedidos
+        </Link>
       </p>
       {initialVms.length === 0 ? (
         <div className="rounded-lg border border-gray-200 bg-gray-50 p-8 text-center">
           <p className="text-gray-600">Você ainda não tem máquinas. Faça um pedido para começar.</p>
-          <Link href="/plans" className="mt-4 inline-block text-indigo-600 hover:underline">
-            Ver planos disponíveis
-          </Link>
+          <div className="mt-4 flex justify-center gap-4">
+            <Link href="/plans" className="text-indigo-600 hover:underline">
+              Ver planos disponíveis
+            </Link>
+            <Link href="/orders" className="text-indigo-600 hover:underline">
+              Ver histórico de pedidos
+            </Link>
+          </div>
         </div>
       ) : (
         <DashboardVmList initialVms={initialVms} />
