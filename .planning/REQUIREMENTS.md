@@ -16,11 +16,11 @@ Requirements for milestone v1.1 Frontend Polish. Frontend only; no backend, data
 
 ### Dashboard Polish
 
-- [ ] **DASH-01**: User sees a world-class premium cloud product experience with clear visual hierarchy and spacing
-- [ ] **DASH-02**: User can quickly understand machine status (running, stopped, provisioning, etc.) through clear visual indicators
-- [ ] **DASH-03**: User can easily see remaining time for their active VM (prominent, readable, possibly with countdown or progress)
-- [ ] **DASH-04**: User is drawn to a strong, prominent Connect CTA for Parsec connection (primary action, high visibility)
-- [ ] **DASH-05**: User experiences dashboard design aligned with UI UX Pro Max guidelines (accessibility, interaction states, responsive layout)
+- [x] **DASH-01**: User sees a world-class premium cloud product experience with clear visual hierarchy and spacing
+- [x] **DASH-02**: User can quickly understand machine status (running, stopped, provisioning, etc.) through clear visual indicators
+- [x] **DASH-03**: User can easily see remaining time for their active VM (prominent, readable, possibly with countdown or progress)
+- [x] **DASH-04**: User is drawn to a strong, prominent Connect CTA for Parsec connection (primary action, high visibility)
+- [x] **DASH-05**: User experiences dashboard design aligned with UI UX Pro Max guidelines (accessibility, interaction states, responsive layout)
 
 ## Future Requirements
 
@@ -49,11 +49,11 @@ Which phases cover which requirements. Updated during roadmap creation.
 | LAND-02 | Phase 6 | Complete |
 | LAND-03 | Phase 6 | Complete |
 | LAND-04 | Phase 6 | Complete |
-| DASH-01 | Phase 7 | Pending |
-| DASH-02 | Phase 7 | Pending |
-| DASH-03 | Phase 7 | Pending |
-| DASH-04 | Phase 7 | Pending |
-| DASH-05 | Phase 7 | Pending |
+| DASH-01 | Phase 7 | Complete |
+| DASH-02 | Phase 7 | Complete |
+| DASH-03 | Phase 7 | Complete |
+| DASH-04 | Phase 7 | Complete |
+| DASH-05 | Phase 7 | Complete |
 
 **Coverage:**
 - v1.1 requirements: 9 total
