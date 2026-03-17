@@ -26,7 +26,7 @@ See: `.planning/PROJECT.md` (updated 2026-03-17)
 Phase: 6 of 7 (Landing Page Redesign)
 Plan: —
 Status: Ready to plan
-Last activity: 2026-03-17 — Roadmap created for v1.1
+Last activity: 2026-03-17 — Phase 6 context gathered
 
 Progress: [░░░░░░░░░░] 0%
 
