@@ -8,15 +8,11 @@ Cloud Gaming VPS Brazil is a cloud gaming rental platform focused on the Brazili
 
 Users can quickly and reliably get a high‑performance Windows cloud PC with GPU, paid upfront in a fixed‑time package, and connect through a simple web dashboard with minimal friction and manual intervention.
 
-## Current Milestone: v1.1 Frontend Polish
+## Current State
 
-**Goal:** Premium frontend polish and conversion optimization — landing page redesign and dashboard refinement — with no backend, database, or API changes.
+**Shipped:** v1.0 MVP (2026-03-17), v1.1 Frontend Polish (2026-03-17)
 
-**Target features:**
-- Landing Page Redesign — premium, high-conversion homepage; clear product explanation; trust signals; strong CTA to /plans
-- Dashboard Polish — world-class premium cloud product experience; stronger hierarchy; clearer machine status; better remaining-time visibility; stronger Connect CTA
-
-**Constraints:** Frontend only. No backend, database, or API changes. Use UI UX Pro Max skill throughout.
+**Next:** Planning next milestone. Run `$gsd-new-milestone` to define v1.2 or v2.0.
 
 ## Requirements
 
@@ -24,7 +20,8 @@ Users can quickly and reliably get a high‑performance Windows cloud PC with GP
 
 <!-- Shipped and confirmed valuable. -->
 
-- ✓ Landing page: premium, high-conversion homepage that explains product, builds trust, pushes to /plans — Phase 6
+- ✓ Landing page: premium, high-conversion homepage that explains product, builds trust, pushes to /plans — v1.1
+- ✓ Dashboard: world-class premium experience with stronger hierarchy, clearer machine status, prominent remaining time, dominant Connect CTA — v1.1
 - ✓ Users can rent GPU cloud PCs using fixed‑time packages (e.g. 4h, 24h, weekly) — v1.0
 - ✓ The system provisions and destroys Windows GPU VMs automatically based on successful payments and remaining time — v1.0
 - ✓ Users have a self‑service dashboard showing active machines, remaining time, status, and a one‑click Parsec connection — v1.0
@@ -35,7 +32,7 @@ Users can quickly and reliably get a high‑performance Windows cloud PC with GP
 
 <!-- Current scope. Building toward these. -->
 
-- [ ] Dashboard: world-class premium experience with stronger hierarchy, clearer machine status, better remaining-time visibility, stronger Connect CTA
+- (None — v1.1 complete. Define next milestone with `$gsd-new-milestone`.)
 
 ### Out of Scope
 
@@ -56,6 +53,7 @@ Users can quickly and reliably get a high‑performance Windows cloud PC with GP
 - **User identity & security**: Email registration with optional 2FA, plus proper logging and records of user activity for basic compliance and abuse investigation.
 - **Operations**: Service should run with minimal manual intervention; admin panel is internal for support and operational overrides, not for customers.
 - **Shipped v1.0**: 5 phases, 15 plans. Auth, plans, payments, VM provisioning, dashboard, admin panel, and abuse controls all operational.
+- **Shipped v1.1**: 2 phases, 5 plans. Landing page dark theme and trust strip; dashboard dark mode, status clarity, countdown/progress, dominant Connect CTA.
 
 ## Constraints
 
@@ -79,6 +77,9 @@ Users can quickly and reliably get a high‑performance Windows cloud PC with GP
 | Trust strip replaces full TrustCard section | Reduces page length and hesitation; compact badges after hero | ✓ Good — Phase 6 |
 | Secondary CTA "Como funciona" anchors to How it works | Soft conversion path before primary /plans CTA | ✓ Good — Phase 6 |
 | text-slate-400 for body text on dark bg | Meets WCAG 4.5:1 contrast; text-slate-500 fails | ✓ Good — Phase 6 |
+| Dark-plans wrapper for dashboard/plans | Aligns with landing; body:has(.dark-plans) for bg | ✓ Good — Phase 7 |
+| Connect CTA orange gradient when featured | Primary action, min-h-[60px], prominent shadow | ✓ Good — Phase 7 |
+| Countdown 60s/1s when <5 min remaining | Real-time urgency; motion-reduce respected | ✓ Good — Phase 7 |
 
 ---
-*Last updated: 2026-03-17 after Phase 6*
+*Last updated: 2026-03-17 after v1.1 milestone*
