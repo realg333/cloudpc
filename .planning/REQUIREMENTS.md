@@ -12,7 +12,7 @@ Requirements for milestone v1.1 Frontend Polish. Frontend only; no backend, data
 - [x] **LAND-01**: User sees a premium, high-conversion homepage that clearly explains the product (cloud gaming PC rental, GPU, Parsec, fixed-time packages)
 - [x] **LAND-02**: User encounters trust signals (testimonials, guarantees, or social proof) that build confidence quickly
 - [x] **LAND-03**: User is guided toward /plans via a strong, prominent CTA (or multiple CTAs) above the fold and at key scroll points
-- [ ] **LAND-04**: User experiences a cohesive visual design aligned with UI UX Pro Max guidelines (accessibility, hierarchy, touch targets, contrast)
+- [x] **LAND-04**: User experiences a cohesive visual design aligned with UI UX Pro Max guidelines (accessibility, hierarchy, touch targets, contrast)
 
 ### Dashboard Polish
 
@@ -48,7 +48,7 @@ Which phases cover which requirements. Updated during roadmap creation.
 | LAND-01 | Phase 6 | Complete |
 | LAND-02 | Phase 6 | Complete |
 | LAND-03 | Phase 6 | Complete |
-| LAND-04 | Phase 6 | Pending |
+| LAND-04 | Phase 6 | Complete |
 | DASH-01 | Phase 7 | Pending |
 | DASH-02 | Phase 7 | Pending |
 | DASH-03 | Phase 7 | Pending |

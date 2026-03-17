@@ -24,7 +24,7 @@ Full details: [milestones/v1.0-ROADMAP.md](milestones/v1.0-ROADMAP.md)
 
 **Milestone Goal:** Premium frontend polish and conversion optimization — landing page redesign and dashboard refinement. Frontend only; no backend, database, or API changes. Use UI UX Pro Max skill throughout.
 
-- [ ] **Phase 6: Landing Page Redesign** — Premium, high-conversion homepage; clear product explanation; trust signals; strong CTA to /plans
+- [x] **Phase 6: Landing Page Redesign** — Premium, high-conversion homepage; clear product explanation; trust signals; strong CTA to /plans (completed 2026-03-17)
 - [ ] **Phase 7: Dashboard Polish** — World-class premium cloud product experience; stronger hierarchy; clearer machine status; better remaining-time visibility; stronger Connect CTA
 
 ---
@@ -86,5 +86,5 @@ Plans:
 | 3. VM Provisioning & Lifecycle | v1.0 | 3/3 | Complete | 2026-03-17 |
 | 4. User Dashboard Experience | v1.0 | 2/2 | Complete | 2026-03-17 |
 | 5. Admin Operations & Safety | v1.0 | 3/3 | Complete | 2026-03-17 |
-| 6. Landing Page Redesign | v1.1 | 0/2 | Not started | — |
+| 6. Landing Page Redesign | 2/2 | Complete   | 2026-03-17 | — |
 | 7. Dashboard Polish | v1.1 | 0/TBD | Not started | — |
