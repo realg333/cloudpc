@@ -72,7 +72,7 @@ export default function HomePage() {
       {/* 2. Trust strip */}
       <section
         id="trust-strip"
-        className="relative z-10 border-t border-white/5 px-4 py-6 sm:px-6 lg:px-8"
+        className="relative z-10 border-t border-white/5 px-4 py-8 sm:px-6 lg:px-8"
         aria-label="Credibilidade"
       >
         <div className="mx-auto flex max-w-6xl flex-wrap items-center justify-center gap-3 sm:gap-4">
@@ -239,7 +239,7 @@ export default function HomePage() {
 
       {/* 7. Plans preview */}
       <section
-        className="relative z-10 border-t border-white/5 bg-[#0a0a0c] px-4 py-20 sm:px-6 lg:px-8"
+        className="relative z-10 border-t border-white/5 px-4 py-20 sm:px-6 lg:px-8"
         aria-labelledby="plans-heading"
       >
         <div className="mx-auto max-w-4xl text-center">
@@ -262,7 +262,7 @@ export default function HomePage() {
           </div>
           <Link
             href="/plans"
-            className="mt-10 inline-flex min-h-[52px] items-center justify-center gap-2 rounded-xl bg-gradient-to-r from-indigo-500 to-violet-600 px-8 font-semibold text-white shadow-[0_4px_20px_rgba(99,102,241,0.4)] transition-all duration-200 hover:from-indigo-400 hover:to-violet-500 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 focus:ring-offset-[#0a0a0c] active:scale-[0.98]"
+            className="mt-10 inline-flex min-h-[52px] items-center justify-center gap-2 rounded-xl bg-gradient-to-r from-indigo-500 to-violet-600 px-8 font-semibold text-white shadow-[0_4px_20px_rgba(99,102,241,0.4)] transition-all duration-200 hover:from-indigo-400 hover:to-violet-500 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 focus:ring-offset-[#050506] active:scale-[0.98]"
           >
             Ver todos os planos
             <ChevronRight className="h-5 w-5" aria-hidden />
