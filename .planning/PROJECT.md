@@ -24,6 +24,7 @@ Users can quickly and reliably get a high‑performance Windows cloud PC with GP
 
 <!-- Shipped and confirmed valuable. -->
 
+- ✓ Landing page: premium, high-conversion homepage that explains product, builds trust, pushes to /plans — Phase 6
 - ✓ Users can rent GPU cloud PCs using fixed‑time packages (e.g. 4h, 24h, weekly) — v1.0
 - ✓ The system provisions and destroys Windows GPU VMs automatically based on successful payments and remaining time — v1.0
 - ✓ Users have a self‑service dashboard showing active machines, remaining time, status, and a one‑click Parsec connection — v1.0
@@ -34,7 +35,6 @@ Users can quickly and reliably get a high‑performance Windows cloud PC with GP
 
 <!-- Current scope. Building toward these. -->
 
-- [ ] Landing page: premium, high-conversion homepage that explains product, builds trust, pushes to /plans
 - [ ] Dashboard: world-class premium experience with stronger hierarchy, clearer machine status, better remaining-time visibility, stronger Connect CTA
 
 ### Out of Scope
@@ -76,6 +76,9 @@ Users can quickly and reliably get a high‑performance Windows cloud PC with GP
 | Start with Vultr GPU instances but keep provider‑agnostic architecture | Vultr offers suitable GPU VMs; abstraction keeps door open for other providers later | ✓ Good — v1.0 |
 | Prepaid only (no wallet) for MVP | Simplifies billing and reduces edge cases; enough for initial launch | ✓ Good — v1.0 |
 | Focus MVP on automation (payments → VM lifecycle) over analytics/advanced fraud | Validates core value quickly with minimal manual operation | ✓ Good — v1.0 |
+| Trust strip replaces full TrustCard section | Reduces page length and hesitation; compact badges after hero | ✓ Good — Phase 6 |
+| Secondary CTA "Como funciona" anchors to How it works | Soft conversion path before primary /plans CTA | ✓ Good — Phase 6 |
+| text-slate-400 for body text on dark bg | Meets WCAG 4.5:1 contrast; text-slate-500 fails | ✓ Good — Phase 6 |
 
 ---
-*Last updated: 2026-03-17 after v1.1 milestone start*
+*Last updated: 2026-03-17 after Phase 6*

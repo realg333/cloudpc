@@ -2,15 +2,15 @@
 gsd_state_version: 1.0
 milestone: v1.1
 milestone_name: Frontend Polish
-status: completed
-last_updated: "2026-03-17T05:02:16.502Z"
-last_activity: 2026-03-17 — Completed 06-02 (UI UX Pro Max alignment)
+status: Ready to plan
+last_updated: "2026-03-17"
+last_activity: 2026-03-17 — Phase 6 complete, ready to plan Phase 7
 progress:
   total_phases: 2
   completed_phases: 1
   total_plans: 2
   completed_plans: 2
-  percent: 100
+  percent: 50
 ---
 
 [# Project State: Cloud Gaming VPS Brazil]
@@ -21,18 +21,25 @@ See: `.planning/PROJECT.md` (updated 2026-03-17)
 
 **Core value:** Users can quickly and reliably get a high‑performance Windows cloud PC with GPU, paid upfront in a fixed‑time package, and connect through a simple web dashboard with minimal friction and manual intervention.
 
-**Current focus:** v1.1 Frontend Polish — Phase 6 (Landing Page Redesign), Phase 7 (Dashboard Polish). Frontend only; no backend/DB/API changes. Use UI UX Pro Max skill throughout.
+**Current focus:** v1.1 Frontend Polish — Phase 7 (Dashboard Polish). Frontend only; no backend/DB/API changes. Use UI UX Pro Max skill throughout.
 
 ## Current Position
 
-Phase: 6 of 7 (Landing Page Redesign)
-Plan: 2 (06-02 complete)
-Status: Phase 6 complete
-Last activity: 2026-03-17 — Completed 06-02 (UI UX Pro Max alignment)
+Phase: 7 of 7 (Dashboard Polish)
+Plan: —
+Status: Ready to plan
+Last activity: 2026-03-17 — Phase 6 complete, ready to plan Phase 7
 
-Progress: [██████████] 100% (2/2 plans in Phase 6)
+Progress: [████████░░] 50% (1/2 phases in v1.1)
 
 ## Accumulated Context
 
 - v1.0: 5 phases, 15 plans — complete (2026-03-17)
-- v1.1: Phases 6–7 defined; 9 requirements mapped (LAND-01–04, DASH-01–05)
+- v1.1: Phase 6 complete (2 plans); Phase 7 Dashboard Polish next; 5 requirements remaining (DASH-01–05)
+- Phase 6 decisions: Trust strip after hero, secondary CTA "Como funciona", text-slate-400 for contrast, focus ring-offset per section bg
+
+## Session Continuity
+
+Last session: 2026-03-17
+Stopped at: Phase 6 complete, ready to plan Phase 7
+Resume file: None
