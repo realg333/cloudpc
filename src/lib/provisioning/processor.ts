@@ -4,6 +4,7 @@
  */
 
 import { prisma } from '@/lib/db';
+import { hasOtherActiveOrder } from '@/lib/orders/concurrency';
 import { processOneJob } from './service';
 import { canProvision } from './cost-safety';
 
@@ -16,11 +17,29 @@ export async function processProvisioningJobs(): Promise<number> {
     where: { status: 'pending' },
     take: 5,
     orderBy: { createdAt: 'asc' },
-    include: { provisionedVm: true },
+    include: {
+      provisionedVm: true,
+      order: { select: { userId: true } },
+    },
   });
 
   let processed = 0;
   for (const job of jobs) {
+    const userId = job.order?.userId;
+    if (userId && (await hasOtherActiveOrder(userId, job.orderId))) {
+      console.log('[provisioning] skipped: user already has active order', {
+        jobId: job.id,
+        userId,
+        orderId: job.orderId,
+      });
+      if (job.provisionedVm) {
+        await prisma.provisionedVm.update({
+          where: { id: job.provisionedVm.id },
+          data: { nextRetryAt: new Date(Date.now() + 5 * 60 * 1000) },
+        });
+      }
+      continue;
+    }
     if (!(await canProvision())) {
       if (job.provisionedVm) {
         await prisma.provisionedVm.update({
