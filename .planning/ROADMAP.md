@@ -39,7 +39,7 @@ Full details: [milestones/v1.1-ROADMAP.md](milestones/v1.1-ROADMAP.md)
 
 **Phase Numbering:** Phases 8–11 (continuing from v1.1)
 
-- [ ] **Phase 8: Environment & Cost Foundation** — .env, CRON, webhooks reachable, 1 VM per user guardrails
+- [ ] **Phase 8: Environment & Cost Foundation** — .env, CRON, webhooks reachable, 1 VM per user guardrails (2 plans)
 - [ ] **Phase 9: Real Payment Gateway** — PIX + crypto, webhook validation, idempotent handling
 - [ ] **Phase 10: Real Vultr Integration** — Production API, MachineProfiles, Parsec-ready instances
 - [ ] **Phase 11: End-to-End & Teardown** — Full flow validated, failure handling, orphan prevention, observability
@@ -56,7 +56,11 @@ Full details: [milestones/v1.1-ROADMAP.md](milestones/v1.1-ROADMAP.md)
   3. Basic production deployment configuration is prepared (even if simple)
   4. "1 active VM per user" is enforced at all times; system rejects attempts to create more
   5. Basic cost guardrails (max active VMs, kill switch) are configured and active
-**Plans**: TBD
+**Plans**: 2 plans
+
+Plans:
+- [ ] 08-01-PLAN.md — Environment & deployment (.env.example, vercel.json cron)
+- [ ] 08-02-PLAN.md — Cost guardrails (VULTR_MAX_ACTIVE_VMS=10, hasOtherActiveOrder gate)
 
 ### Phase 9: Real Payment Gateway
 **Goal**: Real payment intents (PIX + crypto) with validated webhooks and idempotent handling.
@@ -101,7 +105,7 @@ Phases 8–9 and 8–10 can run in parallel after Phase 8; Phase 11 requires bot
 
 | Phase | Milestone | Plans Complete | Status | Completed |
 |-------|-----------|----------------|--------|-----------|
-| 8. Environment & Cost Foundation | v1.2 | 0/0 | Not started | - |
+| 8. Environment & Cost Foundation | v1.2 | 0/2 | Not started | - |
 | 9. Real Payment Gateway | v1.2 | 0/0 | Not started | - |
 | 10. Real Vultr Integration | v1.2 | 0/0 | Not started | - |
 | 11. End-to-End & Teardown | v1.2 | 0/0 | Not started | - |
