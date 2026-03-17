@@ -302,7 +302,7 @@ export default function HomePage() {
 
       {/* Footer */}
       <footer className="relative z-10 border-t border-white/5 px-4 py-10 sm:px-6 lg:px-8">
-        <p className="text-center text-sm text-slate-500">
+        <p className="text-center text-sm text-slate-400">
           Pagamento seguro · Infraestrutura São Paulo (GRU) · Sem fidelidade
         </p>
       </footer>
@@ -390,7 +390,7 @@ function PerfCard({
       </div>
       <p className="mt-4 text-sm font-medium text-slate-300">{label}</p>
       <p className="mt-1 text-2xl font-bold text-white">{value}</p>
-      <p className="mt-2 text-sm text-slate-500">{description}</p>
+      <p className="mt-2 text-sm text-slate-400">{description}</p>
     </div>
   );
 }
