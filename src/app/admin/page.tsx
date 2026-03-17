@@ -1,5 +1,7 @@
 import { requireAdmin } from '@/lib/auth/admin';
 import AdminVmList from '@/components/AdminVmList';
+import AdminHealthSection from '@/components/AdminHealthSection';
+import AdminLogsSection from '@/components/AdminLogsSection';
 
 export default async function AdminPage() {
   await requireAdmin();
@@ -18,17 +20,13 @@ export default async function AdminPage() {
         </section>
 
         <section>
-          <h2 className="mb-3 text-lg font-semibold text-gray-900">Métricas</h2>
-          <div className="rounded-lg border border-gray-200 bg-gray-50 p-6 text-center">
-            <p className="text-gray-500">Em breve.</p>
-          </div>
+          <h2 className="mb-3 text-lg font-semibold text-gray-900">Métricas e Saúde</h2>
+          <AdminHealthSection />
         </section>
 
         <section>
           <h2 className="mb-3 text-lg font-semibold text-gray-900">Logs</h2>
-          <div className="rounded-lg border border-gray-200 bg-gray-50 p-6 text-center">
-            <p className="text-gray-500">Em breve.</p>
-          </div>
+          <AdminLogsSection />
         </section>
       </div>
     </div>
