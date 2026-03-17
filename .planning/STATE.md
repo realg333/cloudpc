@@ -74,14 +74,14 @@ progress:
 See: `.planning/PROJECT.md` (updated 2026-03-16)
 
 **Core value:** Users can quickly and reliably get a high‑performance Windows cloud PC with GPU, paid upfront in a fixed‑time package, and connect through a simple web dashboard with minimal friction and manual intervention.  
-**Current focus:** Phase 3 complete — next: Phase 4 (User Dashboard Experience)
+**Current focus:** Phase 4 Plan 01 complete — next: Phase 4 Plan 02 (Connect/Parsec, order history)
 
 ## Progress
 
 - Phases: 5 planned (1–5)
-- Current phase: 3 (VM Provisioning & Lifecycle)
-- **Current Plan:** Not started
-- **Total Plans in Phase:** 3
+- Current phase: 4 (User Dashboard Experience)
+- **Current Plan:** 1 (04-01 completed)
+- **Total Plans in Phase:** 2
 - Requirements: 32 v1 requirements defined and fully mapped to phases.
 
 ## Notes
@@ -96,4 +96,5 @@ See: `.planning/PROJECT.md` (updated 2026-03-16)
 - Phase 3 Plan 01 completed: ProvisionedVm, ProvisioningJob models; MachineProfile vultrPlanId/vultrRegion; seed with Vultr GPU plans. See `.planning/phases/03-vm-provisioning-lifecycle/03-01-SUMMARY.md`.
 - Phase 3 Plan 02 completed: Webhook enqueue, Vultr REST client, provisioning service, cron processor. See `.planning/phases/03-vm-provisioning-lifecycle/03-02-SUMMARY.md`.
 - Phase 3 Plan 03 completed: Time tracking, teardown, reconciliation, cost safety. See `.planning/phases/03-vm-provisioning-lifecycle/03-03-SUMMARY.md`.
+- Phase 4 Plan 01 completed: Dashboard shell, VM list, status, remaining time, polling. See `.planning/phases/04-user-dashboard-experience/04-01-SUMMARY.md`.
 

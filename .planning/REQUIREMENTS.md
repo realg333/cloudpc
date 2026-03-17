@@ -40,8 +40,8 @@ Requirements for initial release. Each will map to roadmap phases.
 
 ### User Dashboard
 
-- [ ] **DASH-01**: User can see a list of their active and recent VMs in the dashboard.
-- [ ] **DASH-02**: Dashboard shows current VM status (provisioning, running, stopping, terminated) and remaining time for active VMs.
+- [x] **DASH-01**: User can see a list of their active and recent VMs in the dashboard.
+- [x] **DASH-02**: Dashboard shows current VM status (provisioning, running, stopping, terminated) and remaining time for active VMs.
 - [ ] **DASH-03**: User can start and stop their VM from the dashboard, within allowed rules (e.g. time continues counting down while the VM is running).
 - [ ] **DASH-04**: When a VM is ready, the dashboard shows connection details and a “Connect” button that launches the Parsec connection flow.
 - [ ] **DASH-05**: Users can see their order history and high‑level usage records for compliance/audit.
