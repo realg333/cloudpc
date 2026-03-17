@@ -2,10 +2,10 @@
 gsd_state_version: 1.0
 milestone: v1.2
 milestone_name: Real Infra & Payments Integration
-current_plan: 2
-status: verifying
+current_plan: Not started
+status: planning
 stopped_at: Completed 08-01-PLAN.md
-last_updated: "2026-03-17T17:20:58.702Z"
+last_updated: "2026-03-17T17:24:36.003Z"
 last_activity: 2026-03-17
 progress:
   total_phases: 4
@@ -29,10 +29,10 @@ See: `.planning/PROJECT.md` (updated 2026-03-17)
 
 **Phase:** 8 of 11 (Environment & Cost Foundation)
 **Plan:** 2
-**Status:** Phase complete — ready for verification
+**Status:** Ready to plan
 **Last activity:** 2026-03-17
 
-**Current Plan:** 2
+**Current Plan:** Not started
 **Total Plans in Phase:** 2
 
 **Progress:** [██████████] 100%
