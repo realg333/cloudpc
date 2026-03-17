@@ -4,6 +4,7 @@
 
 import { prisma } from '@/lib/db';
 import * as vultr from '@/lib/vultr/client';
+import { createActionLog } from '@/lib/action-log';
 
 function serializeError(err: unknown): Record<string, unknown> {
   const msg = err instanceof Error ? err.message : String(err);
@@ -61,6 +62,14 @@ export async function processExpiredVms(): Promise<number> {
           status: 'destroyed',
           destroyedAt,
         },
+      });
+
+      await createActionLog({
+        action: 'vm_destroyed',
+        actorType: 'system',
+        entityType: 'provisionedVm',
+        entityId: vm.id,
+        metadata: { vultrInstanceId: vm.vultrInstanceId, orderId: vm.orderId },
       });
 
       await prisma.order.update({

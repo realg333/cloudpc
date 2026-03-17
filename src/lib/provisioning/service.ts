@@ -5,6 +5,7 @@
 
 import { prisma } from '@/lib/db';
 import * as vultr from '@/lib/vultr/client';
+import { createActionLog } from '@/lib/action-log';
 
 const POLL_INTERVAL_MS = 30_000;
 const MAX_POLL_DURATION_MS = 15 * 60 * 1000; // 15 min
@@ -124,6 +125,13 @@ export async function processOneJob(jobId: string): Promise<void> {
             connectionMethod: 'parsec',
             connectionState: 'ready',
           },
+        });
+        await createActionLog({
+          action: 'vm_created',
+          actorType: 'system',
+          entityType: 'provisionedVm',
+          entityId: vm.id,
+          metadata: { orderId: order.id, vultrInstanceId: instanceId },
         });
         await prisma.provisioningJob.update({
           where: { id: jobId },
