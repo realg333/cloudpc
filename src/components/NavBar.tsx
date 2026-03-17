@@ -13,7 +13,7 @@ export default function NavBar() {
         <Link href="/plans" className="text-gray-600 hover:text-gray-900">
           Planos
         </Link>
-        <Link href="/machines" className="text-gray-600 hover:text-gray-900">
+        <Link href="/dashboard" className="text-gray-600 hover:text-gray-900">
           Minhas Máquinas
         </Link>
         <Link href="/orders" className="text-gray-600 hover:text-gray-900">
