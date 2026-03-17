@@ -21,7 +21,7 @@ export async function createActionLog(params: CreateActionLogParams): Promise<vo
       actorType: params.actorType,
       entityType: params.entityType,
       entityId: params.entityId ?? null,
-      metadata: params.metadata ?? null,
+      metadata: params.metadata ? (params.metadata as object) : undefined,
     },
   });
 }
