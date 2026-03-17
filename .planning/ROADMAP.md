@@ -39,7 +39,7 @@ Full details: [milestones/v1.1-ROADMAP.md](milestones/v1.1-ROADMAP.md)
 
 **Phase Numbering:** Phases 8–11 (continuing from v1.1)
 
-- [ ] **Phase 8: Environment & Cost Foundation** — .env, CRON, webhooks reachable, 1 VM per user guardrails (2 plans)
+- [x] **Phase 8: Environment & Cost Foundation** — .env, CRON, webhooks reachable, 1 VM per user guardrails (2 plans) (completed 2026-03-17)
 - [ ] **Phase 9: Real Payment Gateway** — PIX + crypto, webhook validation, idempotent handling
 - [ ] **Phase 10: Real Vultr Integration** — Production API, MachineProfiles, Parsec-ready instances
 - [ ] **Phase 11: End-to-End & Teardown** — Full flow validated, failure handling, orphan prevention, observability
@@ -105,7 +105,7 @@ Phases 8–9 and 8–10 can run in parallel after Phase 8; Phase 11 requires bot
 
 | Phase | Milestone | Plans Complete | Status | Completed |
 |-------|-----------|----------------|--------|-----------|
-| 8. Environment & Cost Foundation | 1/2 | In Progress|  | - |
+| 8. Environment & Cost Foundation | 2/2 | Complete   | 2026-03-17 | - |
 | 9. Real Payment Gateway | v1.2 | 0/0 | Not started | - |
 | 10. Real Vultr Integration | v1.2 | 0/0 | Not started | - |
 | 11. End-to-End & Teardown | v1.2 | 0/0 | Not started | - |

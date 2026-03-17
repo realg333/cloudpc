@@ -34,10 +34,10 @@ Requirements for milestone v1.2. Focus: production-ready real infrastructure and
 
 ### Environment & Deployment
 
-- [ ] **ENV-01**: .env finalized with real keys and secrets (Vultr, payment gateway, etc.)
-- [ ] **ENV-02**: CRON routes configured for teardown and provisioning jobs
-- [ ] **ENV-03**: Webhook endpoints reachable (public URL or tunneling for development)
-- [ ] **ENV-04**: Basic production deployment configuration prepared (even if simple)
+- [x] **ENV-01**: .env finalized with real keys and secrets (Vultr, payment gateway, etc.)
+- [x] **ENV-02**: CRON routes configured for teardown and provisioning jobs
+- [x] **ENV-03**: Webhook endpoints reachable (public URL or tunneling for development)
+- [x] **ENV-04**: Basic production deployment configuration prepared (even if simple)
 
 ### Cost Control & Safety
 
@@ -72,10 +72,10 @@ Deferred to future releases.
 
 | Requirement | Phase | Status |
 |-------------|-------|--------|
-| ENV-01 | Phase 8 | Pending |
-| ENV-02 | Phase 8 | Pending |
-| ENV-03 | Phase 8 | Pending |
-| ENV-04 | Phase 8 | Pending |
+| ENV-01 | Phase 8 | Complete |
+| ENV-02 | Phase 8 | Complete |
+| ENV-03 | Phase 8 | Complete |
+| ENV-04 | Phase 8 | Complete |
 | COST-01 | Phase 8 | Complete |
 | COST-02 | Phase 8 | Complete |
 | PAY-01 | Phase 9 | Pending |
