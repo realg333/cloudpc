@@ -1,6 +1,9 @@
 import Link from 'next/link';
+import { getSessionFromCookies } from '@/lib/auth/session';
 
-export default function NavBar() {
+export default async function NavBar() {
+  const session = await getSessionFromCookies();
+
   return (
     <nav className="flex items-center gap-6 border-b border-gray-200 bg-white px-6 py-4">
       <Link href="/" className="font-semibold text-gray-900">
@@ -10,6 +13,11 @@ export default function NavBar() {
         <Link href="/" className="text-gray-600 hover:text-gray-900">
           Dashboard
         </Link>
+        {session?.user?.isAdmin && (
+          <Link href="/admin" className="text-indigo-600 hover:text-indigo-700 font-medium">
+            Admin
+          </Link>
+        )}
         <Link href="/plans" className="text-gray-600 hover:text-gray-900">
           Planos
         </Link>
