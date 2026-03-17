@@ -1,3 +1,6 @@
+'use client';
+
+import { useState } from 'react';
 import { getRemainingMinutes, isExpired } from '@/lib/provisioning/time-tracking';
 
 function statusLabel(status: string): string {
@@ -53,10 +56,40 @@ export interface VmStatusCardProps {
 }
 
 export default function VmStatusCard({ vm }: VmStatusCardProps) {
+  const [copyStatus, setCopyStatus] = useState<'idle' | 'copied' | 'error'>('idle');
+  const [loading, setLoading] = useState(false);
   const remaining = getRemainingMinutes({ readyAt: vm.readyAt, expiresAt: vm.expiresAt });
   const expired = isExpired({ expiresAt: vm.expiresAt });
   const isProvisioning = vm.status === 'provisioning' || vm.status === 'payment_confirmed';
   const isActive = vm.status === 'vm_ready' || vm.status === 'expiring';
+  const canConnect = vm.status === 'vm_ready' && vm.connectionState === 'ready';
+
+  async function handleConnect() {
+    setLoading(true);
+    setCopyStatus('idle');
+    try {
+      const res = await fetch(`/api/dashboard/vms/${vm.id}/connection`);
+      if (!res.ok) {
+        const data = await res.json().catch(() => ({}));
+        throw new Error(data.error || 'Erro ao obter dados de conexão');
+      }
+      const data = await res.json();
+      let text = '';
+      if (data.peerId) {
+        text = `Host: ${data.hostname || data.ipAddress || 'N/A'}\nIP: ${data.ipAddress || 'N/A'}\nParsec Peer ID: ${data.peerId}`;
+      } else {
+        text = `Host: ${data.hostname || data.ipAddress || 'N/A'}\nIP: ${data.ipAddress || 'N/A'}`;
+      }
+      await navigator.clipboard.writeText(text);
+      setCopyStatus('copied');
+      setTimeout(() => setCopyStatus('idle'), 3000);
+    } catch {
+      setCopyStatus('error');
+      setTimeout(() => setCopyStatus('idle'), 3000);
+    } finally {
+      setLoading(false);
+    }
+  }
 
   return (
     <div className="rounded-lg border border-gray-200 bg-white p-4">
@@ -78,6 +111,34 @@ export default function VmStatusCard({ vm }: VmStatusCardProps) {
         )}
         {(vm.status === 'destroyed' || vm.status === 'failed') && expired && <p>Expirado</p>}
       </div>
+      {canConnect && (
+        <div className="mt-3 flex flex-wrap items-center gap-2">
+          <button
+            type="button"
+            onClick={handleConnect}
+            disabled={loading}
+            className="rounded-lg bg-indigo-600 px-3 py-1.5 text-sm font-medium text-white hover:bg-indigo-700 disabled:opacity-50"
+          >
+            {loading ? 'Conectando...' : 'Conectar'}
+          </button>
+          {copyStatus === 'copied' && (
+            <span className="text-sm text-green-600">
+              Copiado! Abra o Parsec e conecte usando o endereço.
+            </span>
+          )}
+          {copyStatus === 'error' && (
+            <span className="text-sm text-red-600">Erro ao copiar. Tente novamente.</span>
+          )}
+          <a
+            href="https://parsec.app/downloads"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="text-sm text-indigo-600 hover:underline"
+          >
+            Baixar Parsec
+          </a>
+        </div>
+      )}
     </div>
   );
 }
