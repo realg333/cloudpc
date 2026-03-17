@@ -128,6 +128,20 @@ async function main() {
     },
   });
 
+  // If ADMIN_EMAIL is set, promote that user to admin (user must already exist)
+  const adminEmail = process.env.ADMIN_EMAIL;
+  if (adminEmail) {
+    const updated = await prisma.user.updateMany({
+      where: { email: adminEmail },
+      data: { isAdmin: true },
+    });
+    if (updated.count > 0) {
+      console.log(`Admin privileges granted to ${adminEmail}`);
+    } else {
+      console.warn(`ADMIN_EMAIL=${adminEmail} set but no user found. Create the user first, then re-run seed.`);
+    }
+  }
+
   console.log('Seed completed: MachineProfile and Plan records created/updated.');
 }
 
