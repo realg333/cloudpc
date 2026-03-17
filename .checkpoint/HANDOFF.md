@@ -1,4 +1,4 @@
-﻿# Handoff - Cloud Gaming VPS Brazil
+# Handoff - Cloud Gaming VPS Brazil
 
 **Generated:** 2026-03-17 16:59:26
 **Purpose:** Context snapshot for resuming development in a new session.
@@ -50,9 +50,9 @@ No local changes
 
 ## Session Notes
 
-<!-- Add any notes about what you were doing, decisions made, or blockers before pausing. -->
-
--
+- **Auth fixes em produção:** Correções de autenticação/autorização (admin + loop de redirect) — commitados e pushados.
+- **Arquivos:** admin.ts, session.ts, login, layout, billing, AUTH_FIX_SUMMARY.md.
+- **Próximo:** Deploy na Vercel (automático via push); validar em produção; verificar DATABASE_URL com pooler (6543).
 
 ---
 
