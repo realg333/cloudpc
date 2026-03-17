@@ -2,14 +2,14 @@
 gsd_state_version: 1.0
 milestone: v1.0
 milestone_name: milestone
-current_plan: 2
+current_plan: 3
 status: verifying
-last_updated: "2026-03-17T02:53:23.995Z"
+last_updated: "2026-03-17T02:56:03.477Z"
 progress:
   total_phases: 5
-  completed_phases: 4
+  completed_phases: 5
   total_plans: 15
-  completed_plans: 14
+  completed_plans: 15
 ---
 
 ---
@@ -74,13 +74,13 @@ progress:
 See: `.planning/PROJECT.md` (updated 2026-03-16)
 
 **Core value:** Users can quickly and reliably get a high‑performance Windows cloud PC with GPU, paid upfront in a fixed‑time package, and connect through a simple web dashboard with minimal friction and manual intervention.  
-**Current focus:** Phase 5 Plan 01 complete — Admin foundation (isAdmin, requireAdmin, /admin shell)
+**Current focus:** Phase 5 complete — Admin operations and safety (health, logs, abuse signals)
 
 ## Progress
 
 - Phases: 5 planned (1–5)
 - Current phase: 5 (Admin Operations & Safety)
-- **Current Plan:** 2
+- **Current Plan:** 3
 - **Total Plans in Phase:** 3
 - Requirements: 32 v1 requirements defined and fully mapped to phases.
 
@@ -99,4 +99,6 @@ See: `.planning/PROJECT.md` (updated 2026-03-16)
 - Phase 4 Plan 01 completed: Dashboard shell, VM list, status, remaining time, polling. See `.planning/phases/04-user-dashboard-experience/04-01-SUMMARY.md`.
 - Phase 4 Plan 02 completed: Connection API, Connect button, start/stop placeholder, order history with usage. See `.planning/phases/04-user-dashboard-experience/04-02-SUMMARY.md`.
 - Phase 5 Plan 01 completed: Admin foundation (isAdmin, requireAdmin, /admin shell). See `.planning/phases/05-admin-operations-safety/05-01-SUMMARY.md`.
+- Phase 5 Plan 02 completed: ActionLog, VM list, terminate API and UI. See `.planning/phases/05-admin-operations-safety/05-02-SUMMARY.md`.
+- Phase 5 Plan 03 completed: Health API, logs API, createActionLog wired to provisioning/teardown, AdminHealthSection and AdminLogsSection. See `.planning/phases/05-admin-operations-safety/05-03-SUMMARY.md`.
 
