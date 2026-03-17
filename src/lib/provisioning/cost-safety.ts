@@ -7,7 +7,7 @@ import { prisma } from '@/lib/db';
 const PROVISIONING_ENABLED =
   process.env.PROVISIONING_ENABLED !== 'false' && process.env.PROVISIONING_ENABLED !== '0';
 
-const VULTR_MAX_ACTIVE_VMS = parseInt(process.env.VULTR_MAX_ACTIVE_VMS ?? '50', 10) || 50;
+const VULTR_MAX_ACTIVE_VMS = parseInt(process.env.VULTR_MAX_ACTIVE_VMS ?? '10', 10) || 10;
 
 const ACTIVE_STATUSES = ['provisioning', 'vm_ready', 'expiring', 'destroying'] as const;
 
