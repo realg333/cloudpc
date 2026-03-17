@@ -42,7 +42,7 @@ Requirements for initial release. Each will map to roadmap phases.
 
 - [x] **DASH-01**: User can see a list of their active and recent VMs in the dashboard.
 - [x] **DASH-02**: Dashboard shows current VM status (provisioning, running, stopping, terminated) and remaining time for active VMs.
-- [x] **DASH-03**: User can start and stop their VM from the dashboard, within allowed rules (e.g. time continues counting down while the VM is running).
+- [x] **DASH-03**: User can start and stop their VM from the dashboard, within allowed rules (e.g. time continues counting down while the VM is running). *MVP scope-down: placeholder only; Vultr GPU instances use expiry-based teardown (no pause/resume API).*
 - [x] **DASH-04**: When a VM is ready, the dashboard shows connection details and a “Connect” button that launches the Parsec connection flow.
 - [x] **DASH-05**: Users can see their order history and high‑level usage records for compliance/audit.
 
@@ -115,8 +115,8 @@ Which phases cover which requirements. To be updated when the roadmap is created
 | VM-05   | Phase 3 | Complete |
 | VM-06   | Phase 3 | Complete |
 | VM-07   | Phase 3 | Complete |
-| DASH-01 | Phase 4 | Pending |
-| DASH-02 | Phase 4 | Pending |
+| DASH-01 | Phase 4 | Complete |
+| DASH-02 | Phase 4 | Complete |
 | DASH-03 | Phase 4 | Complete |
 | DASH-04 | Phase 4 | Complete |
 | DASH-05 | Phase 4 | Complete |

@@ -15,7 +15,7 @@ This roadmap covers v1 of the Cloud Gaming VPS Brazil platform, mapping every v1
 | 1 | Foundation & Accounts | Basic auth, plans listing, and core project skeleton are in place. | AUTH-01–04, PLAN-01–02 | Users can sign up, log in, view available plans, and create an order shell. |
 | 2 | Payments & Order Automation | Complete    | 2026-03-17 | Successful PIX/crypto payments reliably transition orders to “paid” and trigger provisioning, with one active VM per user. |
 | 3 | 3/3 | Complete   | 2026-03-17 | Paid orders result in ready‑to‑use Windows GPU VMs that are automatically destroyed when time expires. |
-| 4 | 2/2 | Complete   | 2026-03-17 | Users see status and remaining time clearly and can connect via Parsec from the dashboard without admin help. |
+| 4 | 2/2 | Complete    | 2026-03-17 | Users see status and remaining time clearly and can connect via Parsec from the dashboard without admin help. |
 | 5 | Admin Operations & Safety | Internal operations, monitoring, and basic abuse controls. | ADMIN-01–05, SAFE-01–04 | Admins can operate the fleet safely, with logs and basic abuse/suspicious activity visibility. |
 
 ---
