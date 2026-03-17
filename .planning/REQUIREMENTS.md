@@ -48,7 +48,7 @@ Requirements for initial release. Each will map to roadmap phases.
 
 ### Admin Panel & Operations
 
-- [ ] **ADMIN-01**: Admin can log into an internal admin panel with secure access controls.
+- [x] **ADMIN-01**: Admin can log into an internal admin panel with secure access controls.
 - [ ] **ADMIN-02**: Admin can view all active VMs, including owning user, machine profile, start time, and remaining time.
 - [ ] **ADMIN-03**: Admin can manually start, stop, and terminate any VM via the admin panel, with actions reflected in the provider and database.
 - [ ] **ADMIN-04**: Admin can view basic infrastructure monitoring data (counts of active VMs, recent failures, basic cost estimates per machine/profile).
@@ -59,7 +59,7 @@ Requirements for initial release. Each will map to roadmap phases.
 - [ ] **SAFE-01**: System enforces a maximum of one active VM per user account at any time.
 - [ ] **SAFE-02**: All critical actions (payments processed, VM created/destroyed, admin overrides) are logged with timestamps and user identifiers.
 - [ ] **SAFE-03**: Basic suspicious‑activity monitoring exists (e.g. repeated failed payment webhooks, repeated provisioning errors, unusually frequent restarts) and is surfaced in admin views or logs.
-- [ ] **SAFE-04**: External‑facing endpoints (dashboard, webhooks, APIs) are protected with authentication, authorization, and input validation aligned with best practices.
+- [x] **SAFE-04**: External‑facing endpoints (dashboard, webhooks, APIs) are protected with authentication, authorization, and input validation aligned with best practices.
 
 ## v2 Requirements
 
@@ -120,7 +120,7 @@ Which phases cover which requirements. To be updated when the roadmap is created
 | DASH-03 | Phase 4 | Complete |
 | DASH-04 | Phase 4 | Complete |
 | DASH-05 | Phase 4 | Complete |
-| ADMIN-01 | Phase 5 | Pending |
+| ADMIN-01 | Phase 5 | Complete |
 | ADMIN-02 | Phase 5 | Pending |
 | ADMIN-03 | Phase 5 | Pending |
 | ADMIN-04 | Phase 5 | Pending |
@@ -128,7 +128,7 @@ Which phases cover which requirements. To be updated when the roadmap is created
 | SAFE-01 | Phase 5 | Pending |
 | SAFE-02 | Phase 5 | Pending |
 | SAFE-03 | Phase 5 | Pending |
-| SAFE-04 | Phase 5 | Pending |
+| SAFE-04 | Phase 5 | Complete |
 
 **Coverage:**
 - v1 requirements: 32 total  

@@ -4,12 +4,12 @@ milestone: v1.0
 milestone_name: milestone
 current_plan: Not started
 status: verifying
-last_updated: "2026-03-17T02:38:09.144Z"
+last_updated: "2026-03-17T02:49:03.279Z"
 progress:
   total_phases: 5
   completed_phases: 4
-  total_plans: 12
-  completed_plans: 12
+  total_plans: 15
+  completed_plans: 13
 ---
 
 ---
@@ -74,14 +74,14 @@ progress:
 See: `.planning/PROJECT.md` (updated 2026-03-16)
 
 **Core value:** Users can quickly and reliably get a high‑performance Windows cloud PC with GPU, paid upfront in a fixed‑time package, and connect through a simple web dashboard with minimal friction and manual intervention.  
-**Current focus:** Phase 4 Plan 02 complete — Connect button, order history with usage records
+**Current focus:** Phase 5 Plan 01 complete — Admin foundation (isAdmin, requireAdmin, /admin shell)
 
 ## Progress
 
 - Phases: 5 planned (1–5)
-- Current phase: 4 (User Dashboard Experience)
-- **Current Plan:** Not started
-- **Total Plans in Phase:** 2
+- Current phase: 5 (Admin Operations & Safety)
+- **Current Plan:** 01 complete
+- **Total Plans in Phase:** 3
 - Requirements: 32 v1 requirements defined and fully mapped to phases.
 
 ## Notes
@@ -98,4 +98,5 @@ See: `.planning/PROJECT.md` (updated 2026-03-16)
 - Phase 3 Plan 03 completed: Time tracking, teardown, reconciliation, cost safety. See `.planning/phases/03-vm-provisioning-lifecycle/03-03-SUMMARY.md`.
 - Phase 4 Plan 01 completed: Dashboard shell, VM list, status, remaining time, polling. See `.planning/phases/04-user-dashboard-experience/04-01-SUMMARY.md`.
 - Phase 4 Plan 02 completed: Connection API, Connect button, start/stop placeholder, order history with usage. See `.planning/phases/04-user-dashboard-experience/04-02-SUMMARY.md`.
+- Phase 5 Plan 01 completed: Admin foundation (isAdmin, requireAdmin, /admin shell). See `.planning/phases/05-admin-operations-safety/05-01-SUMMARY.md`.
 

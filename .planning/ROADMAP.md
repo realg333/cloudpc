@@ -16,7 +16,7 @@ This roadmap covers v1 of the Cloud Gaming VPS Brazil platform, mapping every v1
 | 2 | Payments & Order Automation | Complete    | 2026-03-17 | Successful PIX/crypto payments reliably transition orders to “paid” and trigger provisioning, with one active VM per user. |
 | 3 | 3/3 | Complete   | 2026-03-17 | Paid orders result in ready‑to‑use Windows GPU VMs that are automatically destroyed when time expires. |
 | 4 | 2/2 | Complete    | 2026-03-17 | Users see status and remaining time clearly and can connect via Parsec from the dashboard without admin help. |
-| 5 | Admin Operations & Safety | Internal operations, monitoring, and basic abuse controls. | ADMIN-01–05, SAFE-01–04 | Admins can operate the fleet safely, with logs and basic abuse/suspicious activity visibility. |
+| 5 | 1/3 | In Progress|  | Admins can operate the fleet safely, with logs and basic abuse/suspicious activity visibility. |
 
 ---
 
@@ -161,10 +161,10 @@ ADMIN-01, ADMIN-02, ADMIN-03, ADMIN-04, ADMIN-05, SAFE-01, SAFE-02, SAFE-03, SAF
 4. All critical actions are logged with user/admin identity, timestamps, and relevant context, and can be searched or filtered.
 5. Basic suspicious‑activity signals (e.g. repeated failures, unusual restart patterns) are visible so you can manually intervene.
 
-**Plans:** 3 plans
+**Plans:** 1/3 plans executed
 
 Plans:
-- [ ] 05-01-PLAN.md — Admin foundation (isAdmin, requireAdmin, /admin shell)
+- [x] 05-01-PLAN.md — Admin foundation (isAdmin, requireAdmin, /admin shell)
 - [ ] 05-02-PLAN.md — ActionLog, VM list, terminate API and UI
 - [ ] 05-03-PLAN.md — Health, logs, abuse signals, wire ActionLog to provisioning/teardown
 
