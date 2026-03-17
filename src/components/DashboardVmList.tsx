@@ -8,6 +8,7 @@ const MAX_POLL_DURATION_MS = 20 * 60 * 1000;
 
 const PROVISIONING_STATUSES = ['provisioning', 'payment_confirmed'];
 const TERMINAL_STATUSES = ['vm_ready', 'destroyed', 'failed'];
+const ACTIVE_STATUSES = ['vm_ready', 'expiring'];
 
 export interface DashboardVm {
   id: string;
@@ -31,6 +32,14 @@ function hasProvisioningVms(vms: DashboardVm[]): boolean {
 
 function allTerminal(vms: DashboardVm[]): boolean {
   return vms.length > 0 && vms.every((v) => TERMINAL_STATUSES.includes(v.status));
+}
+
+function isConnectable(vm: DashboardVm): boolean {
+  return vm.status === 'vm_ready' && vm.connectionState === 'ready';
+}
+
+function isActive(vm: DashboardVm): boolean {
+  return ACTIVE_STATUSES.includes(vm.status);
 }
 
 export default function DashboardVmList({ initialVms }: DashboardVmListProps) {
@@ -65,33 +74,75 @@ export default function DashboardVmList({ initialVms }: DashboardVmListProps) {
     };
   }, [vms]);
 
-  const activeFirst = [...vms].sort((a, b) => {
-    const active = ['vm_ready', 'expiring', 'provisioning', 'payment_confirmed'];
-    const aIdx = active.indexOf(a.status);
-    const bIdx = active.indexOf(b.status);
-    if (aIdx >= 0 && bIdx >= 0) return aIdx - bIdx;
-    if (aIdx >= 0) return -1;
-    if (bIdx >= 0) return 1;
+  // Sort: connectable first, then active (ready/expiring), then provisioning, then terminal
+  const sorted = [...vms].sort((a, b) => {
+    const order = ['vm_ready', 'expiring', 'provisioning', 'payment_confirmed', 'destroying', 'destroyed', 'failed'];
+    const aIdx = order.indexOf(a.status);
+    const bIdx = order.indexOf(b.status);
+    if (aIdx !== bIdx) return aIdx - bIdx;
+    // Same status: prefer connectable
+    if (isConnectable(a) && !isConnectable(b)) return -1;
+    if (!isConnectable(a) && isConnectable(b)) return 1;
     return 0;
   });
 
+  // Featured: active (ready/expiring) first, else first provisioning
+  const featuredVm =
+    sorted.find((v) => isActive(v)) ?? sorted.find((v) => PROVISIONING_STATUSES.includes(v.status));
+  const otherVms = sorted.filter((v) => v.id !== featuredVm?.id);
+
   return (
-    <div className="space-y-4">
-      {activeFirst.map((vm) => (
-        <VmStatusCard
-          key={vm.id}
-          vm={{
-            id: vm.id,
-            status: vm.status,
-            readyAt: vm.readyAt ? new Date(vm.readyAt) : null,
-            expiresAt: vm.expiresAt ? new Date(vm.expiresAt) : null,
-            machineProfileName: vm.machineProfileName,
-            planName: vm.planName,
-            connectionMethod: vm.connectionMethod,
-            connectionState: vm.connectionState,
-          }}
-        />
-      ))}
+    <div className="space-y-10">
+      {/* Hero: Active machine as focal point */}
+      {featuredVm && (
+        <section aria-labelledby="active-vm-heading">
+          <h2 id="active-vm-heading" className="sr-only">
+            Máquina ativa
+          </h2>
+          <div className="rounded-2xl bg-[#12121a] p-1 ring-1 ring-white/5">
+            <VmStatusCard
+              vm={{
+                id: featuredVm.id,
+                status: featuredVm.status,
+                readyAt: featuredVm.readyAt ? new Date(featuredVm.readyAt) : null,
+                expiresAt: featuredVm.expiresAt ? new Date(featuredVm.expiresAt) : null,
+                machineProfileName: featuredVm.machineProfileName,
+                planName: featuredVm.planName,
+                connectionMethod: featuredVm.connectionMethod,
+                connectionState: featuredVm.connectionState,
+              }}
+              featured
+            />
+          </div>
+        </section>
+      )}
+
+      {/* Other machines - compact list */}
+      {otherVms.length > 0 && (
+        <section>
+          <h2 id="other-vms-heading" className="mb-4 text-sm font-semibold uppercase tracking-wider text-slate-400">
+            Outras máquinas
+          </h2>
+          <ul className="space-y-4" role="list" aria-label="Outras máquinas virtuais">
+            {otherVms.map((vm) => (
+              <li key={vm.id}>
+                <VmStatusCard
+                  vm={{
+                    id: vm.id,
+                    status: vm.status,
+                    readyAt: vm.readyAt ? new Date(vm.readyAt) : null,
+                    expiresAt: vm.expiresAt ? new Date(vm.expiresAt) : null,
+                    machineProfileName: vm.machineProfileName,
+                    planName: vm.planName,
+                    connectionMethod: vm.connectionMethod,
+                    connectionState: vm.connectionState,
+                  }}
+                />
+              </li>
+            ))}
+          </ul>
+        </section>
+      )}
     </div>
   );
 }
