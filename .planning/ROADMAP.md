@@ -45,10 +45,11 @@ Full details: [milestones/v1.0-ROADMAP.md](milestones/v1.0-ROADMAP.md)
   3. User sees strong, prominent CTA(s) to /plans above the fold and at key scroll points
   4. User experiences cohesive visual design aligned with UI UX Pro Max guidelines (accessibility, hierarchy, touch targets, contrast)
 
-**Plans**: TBD
+**Plans**: 2 plans
 
 Plans:
-- [ ] 06-01: TBD
+- [ ] 06-01-PLAN.md — Structure, trust strip, CTAs (reorder sections, add trust strip after hero, secondary CTA)
+- [ ] 06-02-PLAN.md — UI UX Pro Max alignment (accessibility, touch targets, hierarchy, contrast)
 
 ---
 
@@ -85,5 +86,5 @@ Plans:
 | 3. VM Provisioning & Lifecycle | v1.0 | 3/3 | Complete | 2026-03-17 |
 | 4. User Dashboard Experience | v1.0 | 2/2 | Complete | 2026-03-17 |
 | 5. Admin Operations & Safety | v1.0 | 3/3 | Complete | 2026-03-17 |
-| 6. Landing Page Redesign | v1.1 | 0/TBD | Not started | — |
+| 6. Landing Page Redesign | v1.1 | 0/2 | Not started | — |
 | 7. Dashboard Polish | v1.1 | 0/TBD | Not started | — |
