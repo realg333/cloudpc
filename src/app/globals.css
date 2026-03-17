@@ -1,3 +1,86 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+/* Design System Tokens - Premium SaaS (UI UX Pro Max) */
+@layer base {
+  :root {
+    /* Colors - Enterprise SaaS + Conversion */
+    --color-primary: #4F46E5;
+    --color-primary-hover: #4338CA;
+    --color-accent: #EA580C;
+    --color-accent-hover: #C2410C;
+    --color-background: #F8FAFC;
+    --color-surface: #FFFFFF;
+    --color-foreground: #0F172A;
+    --color-muted: #64748B;
+    --color-border: #E2E8F0;
+    --color-success: #059669;
+    --color-destructive: #DC2626;
+
+    /* Typography */
+    --font-sans: 'Plus Jakarta Sans', ui-sans-serif, system-ui, sans-serif;
+
+    /* Spacing */
+    --space-xs: 0.25rem;
+    --space-sm: 0.5rem;
+    --space-md: 1rem;
+    --space-lg: 1.5rem;
+    --space-xl: 2rem;
+    --space-2xl: 3rem;
+    --space-3xl: 4rem;
+
+    /* Shadows */
+    --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.05);
+    --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -2px rgba(0, 0, 0, 0.1);
+    --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -4px rgba(0, 0, 0, 0.1);
+    --shadow-xl: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 8px 10px -6px rgba(0, 0, 0, 0.1);
+    --shadow-accent: 0 4px 14px rgba(79, 70, 229, 0.25);
+
+    /* Glassmorphism (UI UX Pro Max) */
+    --glass-bg: rgba(255, 255, 255, 0.72);
+    --glass-border: rgba(255, 255, 255, 0.5);
+    --glass-blur: 12px;
+  }
+
+  /* Dark mode tokens - Premium Cloud Gaming / Plans page */
+  .dark-plans {
+    --dm-bg: #0a0a0f;
+    --dm-bg-elevated: #12121a;
+    --dm-bg-card: #16161f;
+    --dm-bg-card-hover: #1c1c28;
+    --dm-border: rgba(255, 255, 255, 0.08);
+    --dm-border-accent: rgba(79, 70, 229, 0.4);
+    --dm-text: #f1f5f9;
+    --dm-text-muted: #94a3b8;
+    --dm-text-subtle: #64748b;
+    --dm-accent: #6366f1;
+    --dm-accent-glow: rgba(99, 102, 241, 0.25);
+    --dm-cta: #f97316;
+    --dm-cta-hover: #ea580c;
+    --dm-success: #22c55e;
+    --dm-neon-subtle: rgba(99, 102, 241, 0.15);
+  }
+}
+
+/* Dark body when landing page is shown */
+body:has(.dark-layout) {
+  background: #050506;
+}
+
+/* Dark body when dashboard or plans page is shown */
+body:has(.dark-plans) {
+  background: #0a0a0f;
+}
+
+/* Reduced motion */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}
+
