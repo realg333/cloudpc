@@ -41,8 +41,8 @@ Requirements for milestone v1.2. Focus: production-ready real infrastructure and
 
 ### Cost Control & Safety
 
-- [ ] **COST-01**: Strict "1 active VM per user" enforced at all times
-- [ ] **COST-02**: Basic cost guardrails in place (max active VMs, kill switch)
+- [x] **COST-01**: Strict "1 active VM per user" enforced at all times
+- [x] **COST-02**: Basic cost guardrails in place (max active VMs, kill switch)
 - [ ] **COST-03**: Teardown runs correctly for expired VMs (no orphan instances)
 - [ ] **COST-04**: Orphan VM prevention: no VM left running without valid paid order
 
@@ -76,8 +76,8 @@ Deferred to future releases.
 | ENV-02 | Phase 8 | Pending |
 | ENV-03 | Phase 8 | Pending |
 | ENV-04 | Phase 8 | Pending |
-| COST-01 | Phase 8 | Pending |
-| COST-02 | Phase 8 | Pending |
+| COST-01 | Phase 8 | Complete |
+| COST-02 | Phase 8 | Complete |
 | PAY-01 | Phase 9 | Pending |
 | PAY-02 | Phase 9 | Pending |
 | PAY-03 | Phase 9 | Pending |

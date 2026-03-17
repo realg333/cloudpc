@@ -105,7 +105,7 @@ Phases 8–9 and 8–10 can run in parallel after Phase 8; Phase 11 requires bot
 
 | Phase | Milestone | Plans Complete | Status | Completed |
 |-------|-----------|----------------|--------|-----------|
-| 8. Environment & Cost Foundation | v1.2 | 0/2 | Not started | - |
+| 8. Environment & Cost Foundation | 1/2 | In Progress|  | - |
 | 9. Real Payment Gateway | v1.2 | 0/0 | Not started | - |
 | 10. Real Vultr Integration | v1.2 | 0/0 | Not started | - |
 | 11. End-to-End & Teardown | v1.2 | 0/0 | Not started | - |
