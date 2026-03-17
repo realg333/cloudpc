@@ -2,12 +2,12 @@
 gsd_state_version: 1.0
 milestone: v1.2
 milestone_name: Real Infra & Payments Integration
-status: defining_requirements
-stopped_at: v1.2 milestone started
+status: ready_to_plan
+stopped_at: Roadmap created for v1.2
 last_updated: "2026-03-17"
-last_activity: 2026-03-17 — Milestone v1.2 started
+last_activity: 2026-03-17 — Roadmap created (Phases 8–11)
 progress:
-  total_phases: 0
+  total_phases: 4
   completed_phases: 0
   total_plans: 0
   completed_plans: 0
@@ -22,14 +22,16 @@ See: `.planning/PROJECT.md` (updated 2026-03-17)
 
 **Core value:** Users can quickly and reliably get a high‑performance Windows cloud PC with GPU, paid upfront in a fixed‑time package, and connect through a simple web dashboard with minimal friction and manual intervention.
 
-**Current focus:** v1.2 Real Infra & Payments Integration — defining requirements
+**Current focus:** v1.2 Real Infra & Payments Integration — Phase 8 ready to plan
 
 ## Current Position
 
-**Phase:** Not started (defining requirements)
+**Phase:** 8 of 11 (Environment & Cost Foundation)
 **Plan:** —
-**Status:** Defining requirements
-**Last activity:** 2026-03-17 — Milestone v1.2 started
+**Status:** Ready to plan
+**Last activity:** 2026-03-17 — Roadmap created
+
+**Progress:** [░░░░░░░░░░] 0%
 
 **Shipped:**
 - v1.0 MVP — 5 phases, 15 plans (2026-03-17)
@@ -45,5 +47,5 @@ See: `.planning/PROJECT.md` (updated 2026-03-17)
 ## Session Continuity
 
 Last session: 2026-03-17
-Stopped at: v1.1 milestone complete
+Stopped at: Roadmap created for v1.2
 Resume file: None

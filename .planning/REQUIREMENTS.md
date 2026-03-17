@@ -70,16 +70,41 @@ Deferred to future releases.
 
 ## Traceability
 
-To be populated during roadmap creation.
-
 | Requirement | Phase | Status |
 |-------------|-------|--------|
-| (populated by roadmapper) | | |
+| ENV-01 | Phase 8 | Pending |
+| ENV-02 | Phase 8 | Pending |
+| ENV-03 | Phase 8 | Pending |
+| ENV-04 | Phase 8 | Pending |
+| COST-01 | Phase 8 | Pending |
+| COST-02 | Phase 8 | Pending |
+| PAY-01 | Phase 9 | Pending |
+| PAY-02 | Phase 9 | Pending |
+| PAY-03 | Phase 9 | Pending |
+| PAY-04 | Phase 9 | Pending |
+| PAY-05 | Phase 9 | Pending |
+| OBS-01 | Phase 9 | Pending |
+| VULT-01 | Phase 10 | Pending |
+| VULT-02 | Phase 10 | Pending |
+| VULT-03 | Phase 10 | Pending |
+| VULT-04 | Phase 10 | Pending |
+| VULT-05 | Phase 10 | Pending |
+| OBS-02 | Phase 10 | Pending |
+| FLOW-01 | Phase 11 | Pending |
+| FLOW-02 | Phase 11 | Pending |
+| FLOW-03 | Phase 11 | Pending |
+| FLOW-04 | Phase 11 | Pending |
+| FLOW-05 | Phase 11 | Pending |
+| COST-03 | Phase 11 | Pending |
+| COST-04 | Phase 11 | Pending |
+| OBS-03 | Phase 11 | Pending |
+| OBS-04 | Phase 11 | Pending |
+| OBS-05 | Phase 11 | Pending |
 
 **Coverage:**
 - v1.2 requirements: 24 total
-- Mapped to phases: 0
-- Unmapped: 24 ⚠️
+- Mapped to phases: 24
+- Unmapped: 0 ✓
 
 ---
 *Requirements defined: 2026-03-17*
