@@ -3,6 +3,8 @@ import { listPlanOptions } from '@/lib/plans/catalog';
 import PlanCard from '@/components/PlanCard';
 import Link from 'next/link';
 
+export const dynamic = 'force-dynamic';
+
 export default async function PlansPage() {
   const session = await getSessionFromCookies();
   const options = await listPlanOptions();

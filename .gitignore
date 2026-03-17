@@ -39,3 +39,4 @@ test-results/
 
 # Prisma
 prisma/migrations/
+.vercel

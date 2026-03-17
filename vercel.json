@@ -1,16 +1,1 @@
-{
-  "crons": [
-    {
-      "path": "/api/cron/process-teardown",
-      "schedule": "*/5 * * * *"
-    },
-    {
-      "path": "/api/cron/process-provisioning",
-      "schedule": "* * * * *"
-    },
-    {
-      "path": "/api/cron/reconciliation",
-      "schedule": "*/15 * * * *"
-    }
-  ]
-}
+{}
