@@ -68,10 +68,12 @@ Plans:
   4. User is drawn to a strong, prominent Connect CTA for Parsec connection (primary action, high visibility)
   5. User experiences dashboard design aligned with UI UX Pro Max guidelines (accessibility, interaction states, responsive layout)
 
-**Plans**: TBD
+**Plans**: 3 plans
 
 Plans:
-- [ ] 07-01: TBD
+- [ ] 07-01-PLAN.md — Dark shell + empty state (dark-plans wrapper, persuasive CTA to /plans)
+- [ ] 07-02-PLAN.md — VmStatusCard polish (status clarity, remaining time, Connect CTA)
+- [ ] 07-03-PLAN.md — DashboardVmList + UX Pro Max (featured dominance, accessibility)
 
 ---
 
