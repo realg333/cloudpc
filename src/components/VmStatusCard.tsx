@@ -105,12 +105,27 @@ export default function VmStatusCard({ vm }: VmStatusCardProps) {
       <div className="mt-3 text-sm text-gray-600">
         {isProvisioning && <p>Aguardando VM ficar pronta...</p>}
         {isActive && (
-          <p>
-            {expired ? 'Expirado' : `Tempo restante: ${remaining ?? 0} minutos`}
-          </p>
+          <>
+            <p>Estado: Rodando</p>
+            <p>
+              {expired ? 'Expirado' : `Tempo restante: ${remaining ?? 0} minutos`}
+            </p>
+          </>
         )}
         {(vm.status === 'destroyed' || vm.status === 'failed') && expired && <p>Expirado</p>}
       </div>
+      {isActive && (
+        <div className="mt-2">
+          <button
+            type="button"
+            disabled
+            title="Em breve — o tempo continua contando até o fim do período"
+            className="cursor-not-allowed rounded-lg border border-gray-300 bg-gray-100 px-3 py-1.5 text-sm font-medium text-gray-500"
+          >
+            Parar
+          </button>
+        </div>
+      )}
       {canConnect && (
         <div className="mt-3 flex flex-wrap items-center gap-2">
           <button
