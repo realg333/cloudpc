@@ -1,0 +1,86 @@
+# Requirements: Cloud Gaming VPS Brazil
+
+**Defined:** 2026-03-17
+**Milestone:** v1.2 Real Infra & Payments Integration
+**Core Value:** Users can quickly and reliably get a high‑performance Windows cloud PC with GPU, paid upfront in a fixed‑time package, and connect through a simple web dashboard with minimal friction and manual intervention.
+
+## v1.2 Requirements
+
+Requirements for milestone v1.2. Focus: production-ready real infrastructure and payments. No major frontend redesign.
+
+### Vultr Integration
+
+- [ ] **VULT-01**: System uses real Vultr API key (from .env) for all VM operations
+- [ ] **VULT-02**: MachineProfiles map to real Vultr GPU plans and regions (configurable, validated)
+- [ ] **VULT-03**: Instance creation, status polling, and teardown work correctly against real Vultr API
+- [ ] **VULT-04**: VM labeling and idempotency logic work in production (no duplicate instances for same order)
+- [ ] **VULT-05**: Parsec readiness validated via stable approach (custom image or reliable startup script)
+
+### Payment Gateway
+
+- [ ] **PAY-01**: Mock payment gateway replaced with real provider (via existing gateway integration)
+- [ ] **PAY-02**: System creates real payment intents (PIX QR code and crypto invoice)
+- [ ] **PAY-03**: Webhook signatures and payloads are validated before processing
+- [ ] **PAY-04**: Payment handling is idempotent (duplicate webhooks do not cause duplicate provisioning)
+- [ ] **PAY-05**: Order state transitions are correct: pending → paid → provisioning (no invalid states)
+
+### End-to-End Flow
+
+- [ ] **FLOW-01**: Full real flow works: user → plan → payment → webhook → VM → dashboard → teardown
+- [ ] **FLOW-02**: Payment not completed leaves order in pending state; no VM created
+- [ ] **FLOW-03**: Duplicate webhook does not create duplicate VM or corrupt order state
+- [ ] **FLOW-04**: Provisioning failure is handled; no paid order left without VM attempt (retry or refund path)
+- [ ] **FLOW-05**: No duplicate VM creation for same order under any condition
+
+### Environment & Deployment
+
+- [ ] **ENV-01**: .env finalized with real keys and secrets (Vultr, payment gateway, etc.)
+- [ ] **ENV-02**: CRON routes configured for teardown and provisioning jobs
+- [ ] **ENV-03**: Webhook endpoints reachable (public URL or tunneling for development)
+- [ ] **ENV-04**: Basic production deployment configuration prepared (even if simple)
+
+### Cost Control & Safety
+
+- [ ] **COST-01**: Strict "1 active VM per user" enforced at all times
+- [ ] **COST-02**: Basic cost guardrails in place (max active VMs, kill switch)
+- [ ] **COST-03**: Teardown runs correctly for expired VMs (no orphan instances)
+- [ ] **COST-04**: Orphan VM prevention: no VM left running without valid paid order
+
+### Observability & Debugging
+
+- [ ] **OBS-01**: Structured logs for payment events (intent created, webhook received, order updated)
+- [ ] **OBS-02**: Structured logs for provisioning events (VM created, status changes, teardown)
+- [ ] **OBS-03**: Structured logs for admin actions (terminate, manual overrides)
+- [ ] **OBS-04**: Admin panel shows failure visibility (failed orders, stuck provisioning, errors)
+- [ ] **OBS-05**: Debugging production issues is straightforward (logs, admin visibility, traceability)
+
+## Future Requirements
+
+Deferred to future releases.
+
+(No items deferred from v1.2)
+
+## Out of Scope
+
+| Feature | Reason |
+|---------|--------|
+| Major frontend redesign | UI already polished in v1.1 |
+| New user-facing features | Focus on reliability and real operation |
+| Advanced analytics | Deferred until core flow validated |
+
+## Traceability
+
+To be populated during roadmap creation.
+
+| Requirement | Phase | Status |
+|-------------|-------|--------|
+| (populated by roadmapper) | | |
+
+**Coverage:**
+- v1.2 requirements: 24 total
+- Mapped to phases: 0
+- Unmapped: 24 ⚠️
+
+---
+*Requirements defined: 2026-03-17*
+*Last updated: 2026-03-17 after v1.2 milestone definition*
