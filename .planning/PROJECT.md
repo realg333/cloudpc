@@ -8,6 +8,16 @@ Cloud Gaming VPS Brazil is a cloud gaming rental platform focused on the Brazili
 
 Users can quickly and reliably get a high‑performance Windows cloud PC with GPU, paid upfront in a fixed‑time package, and connect through a simple web dashboard with minimal friction and manual intervention.
 
+## Current Milestone: v1.1 Frontend Polish
+
+**Goal:** Premium frontend polish and conversion optimization — landing page redesign and dashboard refinement — with no backend, database, or API changes.
+
+**Target features:**
+- Landing Page Redesign — premium, high-conversion homepage; clear product explanation; trust signals; strong CTA to /plans
+- Dashboard Polish — world-class premium cloud product experience; stronger hierarchy; clearer machine status; better remaining-time visibility; stronger Connect CTA
+
+**Constraints:** Frontend only. No backend, database, or API changes. Use UI UX Pro Max skill throughout.
+
 ## Requirements
 
 ### Validated
@@ -24,7 +34,8 @@ Users can quickly and reliably get a high‑performance Windows cloud PC with GP
 
 <!-- Current scope. Building toward these. -->
 
-- [ ] Frontend polish, conversion optimization, and UX improvements (landing redesign, dashboard polish)
+- [ ] Landing page: premium, high-conversion homepage that explains product, builds trust, pushes to /plans
+- [ ] Dashboard: world-class premium experience with stronger hierarchy, clearer machine status, better remaining-time visibility, stronger Connect CTA
 
 ### Out of Scope
 
@@ -67,4 +78,4 @@ Users can quickly and reliably get a high‑performance Windows cloud PC with GP
 | Focus MVP on automation (payments → VM lifecycle) over analytics/advanced fraud | Validates core value quickly with minimal manual operation | ✓ Good — v1.0 |
 
 ---
-*Last updated: 2026-03-17 after v1.0 milestone*
+*Last updated: 2026-03-17 after v1.1 milestone start*
