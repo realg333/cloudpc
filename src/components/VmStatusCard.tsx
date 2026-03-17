@@ -294,10 +294,11 @@ export default function VmStatusCard({ vm, featured = false }: VmStatusCardProps
                 type="button"
                 onClick={handleConnect}
                 disabled={loading}
-                className={`group relative inline-flex cursor-pointer items-center justify-center gap-3 rounded-xl font-semibold text-white transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2 disabled:cursor-not-allowed ${
+                aria-label="Conectar via Parsec"
+                className={`group relative inline-flex cursor-pointer items-center justify-center gap-3 rounded-xl text-white transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-orange-400 focus:ring-offset-2 focus:ring-offset-[#0a0a0f] disabled:cursor-not-allowed ${
                   featured
-                    ? 'min-h-[56px] bg-primary px-8 py-4 text-lg shadow-lg shadow-primary/25 hover:bg-primary-hover hover:shadow-xl hover:shadow-primary/30 hover:scale-[1.02] active:scale-[0.99] disabled:opacity-60'
-                    : 'min-h-[48px] bg-primary px-6 py-3 text-base hover:bg-primary-hover focus:ring-offset-2 disabled:opacity-50'
+                    ? 'min-h-[60px] px-10 py-4 text-xl font-bold bg-gradient-to-r from-[#f97316] to-[#ea580c] shadow-[0_4px_24px_rgba(249,115,22,0.45)] hover:from-[#fb923c] hover:to-[#f97316] hover:shadow-[0_6px_32px_rgba(249,115,22,0.5)] active:scale-[0.98] disabled:opacity-60'
+                    : 'min-h-[52px] px-8 py-3.5 text-lg font-semibold bg-gradient-to-r from-[#f97316] to-[#ea580c] shadow-[0_2px_16px_rgba(249,115,22,0.35)] hover:from-[#fb923c] hover:to-[#f97316] hover:shadow-[0_4px_20px_rgba(249,115,22,0.4)] active:scale-[0.98] disabled:opacity-50'
                 }`}
               >
                 {loading ? (
@@ -316,13 +317,13 @@ export default function VmStatusCard({ vm, featured = false }: VmStatusCardProps
                 )}
               </button>
               {copyStatus === 'copied' && (
-                <span className="flex items-center gap-2 text-sm text-emerald-600" role="status">
+                <span className="flex items-center gap-2 text-sm text-emerald-400" role="status">
                   <CheckCircle2 className="h-4 w-4 shrink-0" aria-hidden />
                   Copiado! Abra o Parsec e conecte usando o endereço.
                 </span>
               )}
               {copyStatus === 'error' && (
-                <span className="flex items-center gap-2 text-sm text-red-600" role="alert">
+                <span className="flex items-center gap-2 text-sm text-red-400" role="alert">
                   <AlertCircle className="h-4 w-4 shrink-0" aria-hidden />
                   Erro ao copiar. Tente novamente.
                 </span>
@@ -331,7 +332,7 @@ export default function VmStatusCard({ vm, featured = false }: VmStatusCardProps
                 href="https://parsec.app/downloads"
                 target="_blank"
                 rel="noopener noreferrer"
-                className="inline-flex items-center text-sm font-medium text-primary hover:text-primary-hover transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2 rounded"
+                className="inline-flex items-center text-sm font-medium text-indigo-400 hover:text-indigo-300 transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-indigo-400 focus:ring-offset-2 focus:ring-offset-[#0a0a0f] rounded"
               >
                 Baixar Parsec →
               </a>
