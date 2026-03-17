@@ -4,21 +4,35 @@ import { verifyPassword } from '@/lib/auth/password';
 import { createSession, setPending2FA } from '@/lib/auth/session';
 import { getTwoFactorSecret } from '@/lib/auth/twoFactor';
 
+function getBaseUrl(request: NextRequest): string {
+  const forwardedHost = request.headers.get('x-forwarded-host');
+  const forwardedProto = request.headers.get('x-forwarded-proto');
+  if (forwardedHost && forwardedProto) {
+    return `${forwardedProto}://${forwardedHost}`;
+  }
+  return new URL(request.url).origin;
+}
+
 export async function POST(request: NextRequest) {
   const formData = await request.formData();
   const email = (formData.get('email') as string)?.trim()?.toLowerCase();
   const password = formData.get('password') as string;
+  const redirectTo = (formData.get('redirect') as string)?.trim();
+  const safeRedirect =
+    redirectTo && redirectTo.startsWith('/') && !redirectTo.startsWith('//') ? redirectTo : '/';
+
+  const baseUrl = getBaseUrl(request);
 
   if (!email || !password) {
-    return NextResponse.redirect(new URL('/login?error=missing', request.url));
+    return NextResponse.redirect(new URL('/login?error=missing', baseUrl));
   }
 
   const user = await prisma.user.findUnique({ where: { email } });
   if (!user) {
-    return NextResponse.redirect(new URL('/login?error=invalid', request.url));
+    return NextResponse.redirect(new URL('/login?error=invalid', baseUrl));
   }
   if (!user.emailVerifiedAt) {
-    const url = new URL('/login', request.url);
+    const url = new URL('/login', baseUrl);
     url.searchParams.set('error', 'unverified');
     url.searchParams.set('email', email);
     return NextResponse.redirect(url);
@@ -26,14 +40,14 @@ export async function POST(request: NextRequest) {
 
   const valid = await verifyPassword(password, user.passwordHash);
   if (!valid) {
-    return NextResponse.redirect(new URL('/login?error=invalid', request.url));
+    return NextResponse.redirect(new URL('/login?error=invalid', baseUrl));
   }
 
   const twoFactorSecret = await getTwoFactorSecret(user.id);
-  const response = NextResponse.redirect(new URL('/', request.url));
+  const response = NextResponse.redirect(new URL(safeRedirect, baseUrl));
 
   if (twoFactorSecret) {
-    const redirectResponse = NextResponse.redirect(new URL('/two-factor/verify', request.url));
+    const redirectResponse = NextResponse.redirect(new URL('/two-factor/verify', baseUrl));
     await setPending2FA(user.id, redirectResponse);
     return redirectResponse;
   }

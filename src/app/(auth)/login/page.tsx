@@ -1,147 +1,28 @@
-'use client';
+import { redirect } from 'next/navigation';
+import { getSessionFromCookies } from '@/lib/auth/session';
+import LoginForm from './LoginForm';
 
-import { Suspense, useState } from 'react';
-import { useSearchParams } from 'next/navigation';
-import Link from 'next/link';
-
-function LoginForm() {
-  const searchParams = useSearchParams();
-  const error = searchParams.get('error');
-  const verified = searchParams.get('verified');
-  const signup = searchParams.get('signup');
-  const emailParam = searchParams.get('email') ?? '';
-
-  const [resendEmail, setResendEmail] = useState(emailParam);
-  const [resendStatus, setResendStatus] = useState<'idle' | 'loading' | 'success' | 'error'>('idle');
-  const [resendMessage, setResendMessage] = useState('');
-
-  const showResend = signup === '1' || error === 'unverified';
-
-  const errorMessage =
-    error === 'invalid'
-      ? 'E-mail ou senha incorretos.'
-      : error === 'unverified'
-        ? 'Verifique seu e-mail antes de entrar. Acesse o link que enviamos.'
-        : error === 'missing'
-          ? 'Preencha e-mail e senha.'
-          : error === '2fa_expired'
-            ? 'Sessão expirada. Faça login novamente.'
-            : null;
-
-  async function handleResend(e: React.FormEvent) {
-    e.preventDefault();
-    if (!resendEmail.trim()) return;
-    setResendStatus('loading');
-    setResendMessage('');
-    try {
-      const formData = new FormData();
-      formData.set('email', resendEmail.trim().toLowerCase());
-      const res = await fetch('/api/auth/resend-verification', {
-        method: 'POST',
-        body: formData,
-      });
-      const data = await res.json().catch(() => ({}));
-      if (res.ok) {
-        setResendStatus('success');
-        setResendMessage('E-mail reenviado. Verifique sua caixa de entrada e spam.');
-      } else {
-        setResendStatus('error');
-        setResendMessage(data.error ?? 'Erro ao reenviar. Tente novamente.');
-      }
-    } catch {
-      setResendStatus('error');
-      setResendMessage('Erro de conexão. Tente novamente.');
-    }
+export default async function LoginPage({
+  searchParams,
+}: {
+  searchParams: Promise<{ redirect?: string; error?: string; verified?: string; signup?: string; email?: string }>;
+}) {
+  const session = await getSessionFromCookies();
+  const params = await searchParams;
+  if (session) {
+    const redirectTo =
+      params.redirect && params.redirect.startsWith('/') && !params.redirect.startsWith('//')
+        ? params.redirect
+        : '/';
+    redirect(redirectTo);
   }
-
   return (
-    <div className="mx-auto max-w-md">
-      <h1 className="mb-6 text-2xl font-bold text-gray-900">Entrar</h1>
-      {signup === '1' && (
-        <p className="mb-4 text-sm text-green-600">Conta criada. Verifique seu e-mail e depois entre aqui.</p>
-      )}
-      {verified === '1' && (
-        <p className="mb-4 text-sm text-green-600">E-mail verificado. Você já pode entrar.</p>
-      )}
-      {errorMessage && (
-        <p className="mb-4 text-sm text-red-600">{errorMessage}</p>
-      )}
-      <form method="post" action="/api/auth/login" className="space-y-4">
-        <div>
-          <label htmlFor="email" className="mb-1 block text-sm font-medium text-gray-700">
-            E-mail
-          </label>
-          <input
-            id="email"
-            name="email"
-            type="email"
-            autoComplete="email"
-            defaultValue={emailParam}
-            className="w-full rounded border border-gray-300 px-3 py-2 focus:border-indigo-500 focus:outline-none focus:ring-1 focus:ring-indigo-500"
-            required
-          />
-        </div>
-        <div>
-          <label htmlFor="password" className="mb-1 block text-sm font-medium text-gray-700">
-            Senha
-          </label>
-          <input
-            id="password"
-            name="password"
-            type="password"
-            autoComplete="current-password"
-            className="w-full rounded border border-gray-300 px-3 py-2 focus:border-indigo-500 focus:outline-none focus:ring-1 focus:ring-indigo-500"
-            required
-          />
-        </div>
-        <button
-          type="submit"
-          className="w-full rounded bg-indigo-600 py-2 text-white hover:bg-indigo-700"
-        >
-          Entrar
-        </button>
-      </form>
-
-      {showResend && (
-        <div className="mt-6 rounded-lg border border-gray-200 bg-gray-50 p-4">
-          <p className="mb-3 text-sm font-medium text-gray-700">Não recebeu o e-mail de ativação?</p>
-          <form onSubmit={handleResend} className="flex gap-2">
-            <input
-              type="email"
-              value={resendEmail}
-              onChange={(e) => setResendEmail(e.target.value)}
-              placeholder="Seu e-mail"
-              className="flex-1 rounded border border-gray-300 px-3 py-2 text-sm focus:border-indigo-500 focus:outline-none focus:ring-1 focus:ring-indigo-500"
-              required
-            />
-            <button
-              type="submit"
-              disabled={resendStatus === 'loading'}
-              className="rounded bg-gray-700 px-4 py-2 text-sm font-medium text-white hover:bg-gray-800 disabled:opacity-60"
-            >
-              {resendStatus === 'loading' ? 'Enviando...' : 'Reenviar'}
-            </button>
-          </form>
-          {resendStatus === 'success' && (
-            <p className="mt-2 text-sm text-green-600">{resendMessage}</p>
-          )}
-          {resendStatus === 'error' && (
-            <p className="mt-2 text-sm text-red-600">{resendMessage}</p>
-          )}
-        </div>
-      )}
-
-      <p className="mt-4 text-center text-sm text-gray-600">
-        Não tem conta? <Link href="/signup" className="text-indigo-600 hover:underline">Criar conta</Link>
-      </p>
-    </div>
-  );
-}
-
-export default function LoginPage() {
-  return (
-    <Suspense fallback={<div className="mx-auto max-w-md animate-pulse rounded bg-gray-200 py-12" />}>
-      <LoginForm />
-    </Suspense>
+    <LoginForm
+      redirectParam={params.redirect}
+      errorParam={params.error}
+      verifiedParam={params.verified}
+      signupParam={params.signup}
+      emailParam={params.email ?? ''}
+    />
   );
 }

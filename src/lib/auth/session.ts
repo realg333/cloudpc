@@ -81,7 +81,13 @@ export async function destroySession(request: NextRequest, response: NextRespons
       // ignore
     }
   }
-  response.cookies.set(SESSION_COOKIE, '', { httpOnly: true, maxAge: 0, path: '/' });
+  response.cookies.set(SESSION_COOKIE, '', {
+    httpOnly: true,
+    maxAge: 0,
+    path: '/',
+    secure: process.env.NODE_ENV === 'production',
+    sameSite: 'lax',
+  });
 }
 
 const PENDING_2FA_COOKIE = 'pending2fa';

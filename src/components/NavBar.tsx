@@ -1,4 +1,5 @@
 import { getSessionFromCookies } from '@/lib/auth/session';
+import { isUserAdmin } from '@/lib/auth/admin';
 import NavBarContent from './NavBarContent';
 
 export default async function NavBar() {
@@ -7,7 +8,7 @@ export default async function NavBar() {
   return (
     <NavBarContent
       isLoggedIn={!!session}
-      isAdmin={!!session?.user?.isAdmin}
+      isAdmin={!!(session?.user && isUserAdmin(session.user))}
     />
   );
 }

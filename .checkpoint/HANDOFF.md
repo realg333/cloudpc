@@ -1,6 +1,6 @@
 ﻿# Handoff - Cloud Gaming VPS Brazil
 
-**Generated:** 2026-03-17 02:44:28
+**Generated:** 2026-03-17 16:57:08
 **Purpose:** Context snapshot for resuming development in a new session.
 
 ---
@@ -10,21 +10,53 @@
 | Field | Value |
 |-------|-------|
 | Branch | `master` |
-| Commit | `915e8d7` |
+| Commit | `a50c4fe` |
 | Status | See below |
 
 ### Git Status (raw)
 
 ```
 On branch master
-nothing to commit, working tree clean
+Your branch is up to date with 'origin/master'.
+
+Changes not staged for commit:
+  (use "git add <file>..." to update what will be committed)
+  (use "git restore <file>..." to discard changes in working directory)
+	modified:   .env.example
+	modified:   prisma/seed.ts
+	modified:   src/app/(auth)/login/page.tsx
+	modified:   src/app/api/auth/login/route.ts
+	modified:   src/app/layout.tsx
+	modified:   src/components/NavBar.tsx
+	modified:   src/lib/auth/admin.ts
+	modified:   src/lib/auth/session.ts
+
+Untracked files:
+  (use "git add <file>..." to include in what will be committed)
+	AUTH_FIX_SUMMARY.md
+	SUPABASE_VERCEL.md
+	src/app/(auth)/login/LoginForm.tsx
+	src/app/billing/
+
+no changes added to commit (use "git add" and/or "git commit -a")
 
 ```
 
 ### Diff Summary
 
 ```
-No local changes
+Staged:
+Unstaged:
+ .env.example                    |   5 +-
+ prisma/seed.ts                  |  15 ++--
+ src/app/(auth)/login/page.tsx   | 167 ++++++----------------------------------
+ src/app/api/auth/login/route.ts |  26 +++++--
+ src/app/layout.tsx              |   2 +
+ src/components/NavBar.tsx       |   3 +-
+ src/lib/auth/admin.ts           |  15 +++-
+ src/lib/auth/session.ts         |   8 +-
+ 8 files changed, 81 insertions(+), 160 deletions(-)
+
 ```
 
 ---
@@ -39,7 +71,7 @@ No local changes
 
 ## Current Progress
 
-- **Milestone:** null
+- **Milestone:** v1.2
 - **Current phase:** Phase 1 - Foundation and Accounts
 - **Last completed:** See STATE.md
 - **Next up:** See STATE.md
