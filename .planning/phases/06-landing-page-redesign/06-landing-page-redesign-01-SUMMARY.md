@@ -61,7 +61,7 @@ Each task was committed atomically:
 1. **Task 1: Reorder sections and add trust strip after hero** - `3236618` (feat)
 2. **Task 2: Add secondary CTA "Como funciona" in hero** - `3236618` (feat, combined with Task 1)
 
-**Plan metadata:** (pending final docs commit)
+**Plan metadata:** `f67ab45` (docs: complete 06-01 plan)
 
 ## Files Created/Modified
 
