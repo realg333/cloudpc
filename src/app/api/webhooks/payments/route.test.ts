@@ -2,18 +2,20 @@ import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { PIX_SUCCESS, PIX_FAILED, CRYPTO_SUCCESS } from '../../../../../tests/fixtures/webhook-payloads';
 import { prisma } from '@/lib/db';
 
-vi.mock('@/lib/db', () => ({
-  prisma: {
+vi.mock('@/lib/db', () => {
+  const p = {
     paymentLog: { create: vi.fn() },
     order: { findUnique: vi.fn(), update: vi.fn() },
-    payment: { create: vi.fn() },
-    provisioningJob: { create: vi.fn() },
+    payment: { create: vi.fn(), findUnique: vi.fn() },
+    provisioningJob: { create: vi.fn(), findUnique: vi.fn() },
     provisionedVm: { create: vi.fn() },
-    $transaction: vi.fn((arg: unknown) =>
-      Array.isArray(arg) ? Promise.all(arg as Promise<unknown>[]) : (arg as () => Promise<unknown>)()
-    ),
-  },
-}));
+    $transaction: vi.fn((arg: unknown) => {
+      if (Array.isArray(arg)) return Promise.all(arg as Promise<unknown>[]);
+      return (arg as (tx: unknown) => Promise<unknown>)(p);
+    }),
+  };
+  return { prisma: p };
+});
 
 vi.mock('@/lib/orders/concurrency', () => ({
   hasActiveOrder: vi.fn(),
@@ -61,7 +63,9 @@ describe('webhook handler', () => {
       user: {},
     } as never);
     vi.mocked(prisma.order.update).mockResolvedValue({} as never);
+    vi.mocked(prisma.payment.findUnique).mockResolvedValue(null);
     vi.mocked(prisma.payment.create).mockResolvedValue({} as never);
+    vi.mocked(prisma.provisioningJob.findUnique).mockResolvedValue(null);
     vi.mocked(prisma.provisioningJob.create).mockResolvedValue({ id: 'job_1', orderId, status: 'pending' } as never);
     vi.mocked(prisma.provisionedVm.create).mockResolvedValue({} as never);
 
@@ -89,7 +93,9 @@ describe('webhook handler', () => {
       user: {},
     } as never);
     vi.mocked(prisma.order.update).mockResolvedValue({} as never);
+    vi.mocked(prisma.payment.findUnique).mockResolvedValue(null);
     vi.mocked(prisma.payment.create).mockResolvedValue({} as never);
+    vi.mocked(prisma.provisioningJob.findUnique).mockResolvedValue(null);
     vi.mocked(prisma.provisioningJob.create).mockResolvedValue({ id: 'job_1', orderId, status: 'pending' } as never);
     vi.mocked(prisma.provisionedVm.create).mockResolvedValue({} as never);
 

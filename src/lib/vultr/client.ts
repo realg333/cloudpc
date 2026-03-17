@@ -122,6 +122,17 @@ export async function listInstances(): Promise<VultrInstance[]> {
 }
 
 /**
+ * Find an instance by exact label match. Used for idempotency: if createInstance
+ * succeeded but DB update failed, we can reuse the existing instance instead of
+ * creating a duplicate.
+ * @returns Instance if found, null otherwise
+ */
+export async function findInstanceByLabel(label: string): Promise<VultrInstance | null> {
+  const instances = await listInstances();
+  return instances.find((i) => i.label === label) ?? null;
+}
+
+/**
  * Delete instance by ID.
  * @returns void on 204
  * @throws On non-2xx

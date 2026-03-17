@@ -80,20 +80,25 @@ export async function processOneJob(jobId: string): Promise<void> {
       const label = `cloudpc-${order.id}`;
       const hostname = `cloudpc-${order.id}`.slice(0, 63);
 
-      const instance = await vultr.createInstance({
-        region: vultrRegion,
-        plan: vultrPlanId,
-        os_id: VULTR_WINDOWS_GPU_OS_ID,
-        label,
-        hostname,
-      });
+      // Idempotency: if createInstance succeeded but DB update failed previously,
+      // an instance with this label may already exist. Reuse it to avoid duplicates.
+      let instance = await vultr.findInstanceByLabel(label);
+      if (!instance) {
+        instance = await vultr.createInstance({
+          region: vultrRegion,
+          plan: vultrPlanId,
+          os_id: VULTR_WINDOWS_GPU_OS_ID,
+          label,
+          hostname,
+        });
+      }
 
       instanceId = instance.id;
       await prisma.provisionedVm.update({
         where: { id: vm.id },
         data: {
           vultrInstanceId: instance.id,
-          ipAddress: instance.main_ip ?? null,
+          ipAddress: instance.main_ip ?? vm.ipAddress ?? null,
           label,
           hostname,
         },

@@ -1,61 +1,7 @@
-# Handoff - Cloud Gaming VPS Brazil
+﻿# Handoff - Cloud Gaming VPS Brazil
 
-**Generated:** 2026-03-17
+**Generated:** 2026-03-16 23:20:43
 **Purpose:** Context snapshot for resuming development in a new session.
-
----
-
-## Current Phase
-
-| Field | Value |
-|-------|-------|
-| Phase | 2 — Payments & Order Automation |
-| Status | Complete |
-| Progress | 6/7 plans done (86%) |
-
----
-
-## Last Completed Phase
-
-**Phase 2: Payments & Order Automation** (2026-03-17)
-
-- Webhook handler with signature verification and idempotency
-- Payment intent API with PLAN-03 concurrency check
-- Checkout UI for PIX and crypto (`/orders/[id]/pay`)
-- Payment, PaymentLog models; Plan.priceCents; Order.amountCents
-- `hasActiveOrder` and `createMockGateway` for development
-
----
-
-## Next Step
-
-**Execute Phase 3** — VM Provisioning & Lifecycle
-
-```bash
-$gsd-plan-phase 3   # plan first (if not done)
-$gsd-execute-phase 3
-```
-
----
-
-## Recent Changes
-
-| Area | Change |
-|------|--------|
-| Schema | Payment, PaymentLog models; Plan.priceCents; Order.amountCents |
-| API | `POST /api/webhooks/payments`, `POST /api/payments/create` |
-| UI | "Pagar" link on orders; checkout page with PIX/crypto options |
-| Tests | Concurrency, gateway, webhook tests; E2E payments spec stubs |
-
----
-
-## Blockers / Issues
-
-| Issue | Impact | Action |
-|-------|--------|--------|
-| Git not in PATH | No automatic commits | Run `git add` / `git commit` manually |
-| DB unreachable | Migration not applied | Run `npx prisma migrate dev` and `npx prisma db seed` when DB is available |
-| Build EBUSY | Static gen may fail (OneDrive lock) | Compilation succeeds; environment-specific |
 
 ---
 
@@ -63,9 +9,42 @@ $gsd-execute-phase 3
 
 | Field | Value |
 |-------|-------|
-| Branch | `n/a` |
-| Commit | `n/a` |
-| Status | Git not available or not a repository |
+| Branch | `master` |
+| Commit | `bf05785` |
+| Status | See below |
+
+### Git Status (raw)
+
+```
+On branch master
+Changes not staged for commit:
+  (use "git add <file>..." to update what will be committed)
+  (use "git restore <file>..." to discard changes in working directory)
+	modified:   src/app/api/webhooks/payments/route.test.ts
+	modified:   src/app/api/webhooks/payments/route.ts
+	modified:   src/lib/provisioning/service.ts
+	modified:   src/lib/vultr/client.ts
+
+Untracked files:
+  (use "git add <file>..." to include in what will be committed)
+	.planning/phases/03-vm-provisioning-lifecycle/03-VALIDATION-REPORT.md
+
+no changes added to commit (use "git add" and/or "git commit -a")
+
+```
+
+### Diff Summary
+
+```
+Staged:
+Unstaged:
+ src/app/api/webhooks/payments/route.test.ts | 24 +++++++----
+ src/app/api/webhooks/payments/route.ts      | 65 ++++++++++++++---------------
+ src/lib/provisioning/service.ts             | 21 ++++++----
+ src/lib/vultr/client.ts                     | 11 +++++
+ 4 files changed, 71 insertions(+), 50 deletions(-)
+
+```
 
 ---
 
@@ -74,6 +53,23 @@ $gsd-execute-phase 3
 - **Project:** Cloud Gaming VPS Brazil
 - **Core value:** Users rent GPU cloud PCs with fixed-time packages, connect via Parsec from a web dashboard.
 - **Source of truth:** `.planning/PROJECT.md`, `.planning/REQUIREMENTS.md`, `.planning/ROADMAP.md`, `.planning/STATE.md`
+
+---
+
+## Current Progress
+
+- **Milestone:** v1.0
+- **Current phase:** Phase 3
+- **Last completed:** See STATE.md
+- **Next up:** See STATE.md
+
+---
+
+## Session Notes
+
+<!-- Add any notes about what you were doing, decisions made, or blockers before pausing. -->
+
+-
 
 ---
 

@@ -75,43 +75,42 @@ export async function POST(request: Request) {
     const gatewayPaymentId = payload.eventId;
     const method = (payload as { method?: string }).method ?? 'pix';
 
-    await prisma.$transaction([
-      prisma.order.update({
+    // Single transaction: order, payment, job, vm. Ensures no paid order without provisioning job.
+    await prisma.$transaction(async (tx) => {
+      await tx.order.update({
         where: { id: order.id },
         data: { status: 'paid' },
-      }),
-      prisma.payment.create({
-        data: {
-          orderId: order.id,
-          gatewayPaymentId,
-          amountCents,
-          currency: order.currency ?? 'BRL',
-          method: method === 'crypto' ? 'crypto' : 'pix',
-          status: 'completed',
-        },
-      }),
-    ]);
+      });
 
-    try {
-      const job = await prisma.provisioningJob.create({
-        data: { orderId: order.id, status: 'pending' },
-      });
-      await prisma.provisionedVm.create({
-        data: {
-          orderId: order.id,
-          provisioningJobId: job.id,
-          status: 'payment_confirmed',
-          machineProfileId: order.machineProfileId,
-        },
-      });
-    } catch (e) {
-      const err = e as { code?: string };
-      if (err.code === 'P2002') {
-        // Idempotent: duplicate orderId for job/vm, skip
-      } else {
-        throw e;
+      const existingPayment = await tx.payment.findUnique({ where: { orderId: order.id } });
+      if (!existingPayment) {
+        await tx.payment.create({
+          data: {
+            orderId: order.id,
+            gatewayPaymentId,
+            amountCents,
+            currency: order.currency ?? 'BRL',
+            method: method === 'crypto' ? 'crypto' : 'pix',
+            status: 'completed',
+          },
+        });
       }
-    }
+
+      const existingJob = await tx.provisioningJob.findUnique({ where: { orderId: order.id } });
+      if (!existingJob) {
+        const job = await tx.provisioningJob.create({
+          data: { orderId: order.id, status: 'pending' },
+        });
+        await tx.provisionedVm.create({
+          data: {
+            orderId: order.id,
+            provisioningJobId: job.id,
+            status: 'payment_confirmed',
+            machineProfileId: order.machineProfileId,
+          },
+        });
+      }
+    });
 
     console.log('[webhook] order paid', {
       orderId: order.id,
