@@ -14,18 +14,17 @@ Users can quickly and reliably get a high‑performance Windows cloud PC with GP
 
 <!-- Shipped and confirmed valuable. -->
 
-(None yet — ship to validate)
+- ✓ Users can rent GPU cloud PCs using fixed‑time packages (e.g. 4h, 24h, weekly) — v1.0
+- ✓ The system provisions and destroys Windows GPU VMs automatically based on successful payments and remaining time — v1.0
+- ✓ Users have a self‑service dashboard showing active machines, remaining time, status, and a one‑click Parsec connection — v1.0
+- ✓ Admins can monitor all active VMs, see which user owns each, and perform manual start/stop/terminate actions — v1.0
+- ✓ The platform enforces one active VM per user and includes basic abuse controls (concurrency limits, logging, optional 2FA) — v1.0
 
 ### Active
 
 <!-- Current scope. Building toward these. -->
 
-- [ ] Users can rent GPU cloud PCs using fixed‑time packages (e.g. 4h, 24h, weekly) instead of per‑hour billing.
-- [ ] The system provisions and destroys Windows GPU VMs automatically based on successful payments and remaining time.
-- [ ] Users have a self‑service dashboard showing active machines, remaining time, status, and a one‑click Parsec connection.
-- [ ] Admins can monitor all active VMs, see which user owns each, and perform manual start/stop/terminate actions.
-- [ ] The architecture optimizes infra cost (pay‑per‑hour to provider vs fixed packages to users) while remaining scalable to many concurrent users.
-- [ ] The platform enforces one active VM per user and includes basic abuse controls (concurrency limits, logging, optional 2FA).
+- [ ] Frontend polish, conversion optimization, and UX improvements (landing redesign, dashboard polish)
 
 ### Out of Scope
 
@@ -45,10 +44,11 @@ Users can quickly and reliably get a high‑performance Windows cloud PC with GP
 - **Payments**: PIX and crypto are processed by an existing gateway; this system only needs to react to payment confirmation webhooks and strongly encourage crypto usage.
 - **User identity & security**: Email registration with optional 2FA, plus proper logging and records of user activity for basic compliance and abuse investigation.
 - **Operations**: Service should run with minimal manual intervention; admin panel is internal for support and operational overrides, not for customers.
+- **Shipped v1.0**: 5 phases, 15 plans. Auth, plans, payments, VM provisioning, dashboard, admin panel, and abuse controls all operational.
 
 ## Constraints
 
-- **Tech Stack**: Modern web stack (e.g. Next.js) for the frontend, Node.js for backend services, and integration with Vultr’s API for VM lifecycle.
+- **Tech Stack**: Modern web stack (e.g. Next.js) for the frontend, Node.js for backend services, and integration with Vultr's API for VM lifecycle.
 - **Business Model**: Prepaid fixed‑time packages only for MVP (no wallets/balances); predictable pricing for users, cost optimization handled internally.
 - **Region & Payments**: Focused on Brazilian users; must support PIX and crypto via existing payment gateway webhooks.
 - **Timeline**: Prioritize launching a working MVP quickly over advanced analytics or complex anti‑fraud.
@@ -61,11 +61,10 @@ Users can quickly and reliably get a high‑performance Windows cloud PC with GP
 
 | Decision | Rationale | Outcome |
 |----------|-----------|---------|
-| Use fixed‑time packages (4h/24h/weekly) instead of per‑hour billing for users | Provides predictable pricing and simpler UX while allowing internal infra cost optimization | — Pending |
-| Start with Vultr GPU instances but keep provider‑agnostic architecture | Vultr offers suitable GPU VMs; abstraction keeps door open for other providers later | — Pending |
-| Prepaid only (no wallet) for MVP | Simplifies billing and reduces edge cases; enough for initial launch | — Pending |
-| Focus MVP on automation (payments → VM lifecycle) over analytics/advanced fraud | Validates core value quickly with minimal manual operation | — Pending |
+| Use fixed‑time packages (4h/24h/weekly) instead of per‑hour billing for users | Provides predictable pricing and simpler UX while allowing internal infra cost optimization | ✓ Good — v1.0 |
+| Start with Vultr GPU instances but keep provider‑agnostic architecture | Vultr offers suitable GPU VMs; abstraction keeps door open for other providers later | ✓ Good — v1.0 |
+| Prepaid only (no wallet) for MVP | Simplifies billing and reduces edge cases; enough for initial launch | ✓ Good — v1.0 |
+| Focus MVP on automation (payments → VM lifecycle) over analytics/advanced fraud | Validates core value quickly with minimal manual operation | ✓ Good — v1.0 |
 
 ---
-*Last updated: 2026-03-16 after initial project definition*
-
+*Last updated: 2026-03-17 after v1.0 milestone*
