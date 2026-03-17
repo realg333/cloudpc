@@ -1,6 +1,6 @@
-# Handoff - Cloud Gaming VPS Brazil
+﻿# Handoff - Cloud Gaming VPS Brazil
 
-**Generated:** 2026-03-17 16:57:08
+**Generated:** 2026-03-17 16:59:26
 **Purpose:** Context snapshot for resuming development in a new session.
 
 ---
@@ -10,7 +10,7 @@
 | Field | Value |
 |-------|-------|
 | Branch | `master` |
-| Commit | `a50c4fe` |
+| Commit | `639fd37` |
 | Status | See below |
 
 ### Git Status (raw)
@@ -19,44 +19,14 @@
 On branch master
 Your branch is up to date with 'origin/master'.
 
-Changes not staged for commit:
-  (use "git add <file>..." to update what will be committed)
-  (use "git restore <file>..." to discard changes in working directory)
-	modified:   .env.example
-	modified:   prisma/seed.ts
-	modified:   src/app/(auth)/login/page.tsx
-	modified:   src/app/api/auth/login/route.ts
-	modified:   src/app/layout.tsx
-	modified:   src/components/NavBar.tsx
-	modified:   src/lib/auth/admin.ts
-	modified:   src/lib/auth/session.ts
-
-Untracked files:
-  (use "git add <file>..." to include in what will be committed)
-	AUTH_FIX_SUMMARY.md
-	SUPABASE_VERCEL.md
-	src/app/(auth)/login/LoginForm.tsx
-	src/app/billing/
-
-no changes added to commit (use "git add" and/or "git commit -a")
+nothing to commit, working tree clean
 
 ```
 
 ### Diff Summary
 
 ```
-Staged:
-Unstaged:
- .env.example                    |   5 +-
- prisma/seed.ts                  |  15 ++--
- src/app/(auth)/login/page.tsx   | 167 ++++++----------------------------------
- src/app/api/auth/login/route.ts |  26 +++++--
- src/app/layout.tsx              |   2 +
- src/components/NavBar.tsx       |   3 +-
- src/lib/auth/admin.ts           |  15 +++-
- src/lib/auth/session.ts         |   8 +-
- 8 files changed, 81 insertions(+), 160 deletions(-)
-
+No local changes
 ```
 
 ---
@@ -80,9 +50,9 @@ Unstaged:
 
 ## Session Notes
 
-- **Auth fixes aplicados:** Correções de autenticação/autorização para produção (admin + loop de redirect).
-- **Arquivos:** admin.ts (isUserAdmin + ADMIN_EMAIL), session.ts (cookie logout), login (redirect param, server component), layout (force-dynamic), billing page, AUTH_FIX_SUMMARY.md.
-- **Próximo:** Fazer deploy na Vercel e validar em produção; verificar DATABASE_URL com pooler (6543).
+<!-- Add any notes about what you were doing, decisions made, or blockers before pausing. -->
+
+-
 
 ---
 
