@@ -15,7 +15,7 @@ This roadmap covers v1 of the Cloud Gaming VPS Brazil platform, mapping every v1
 | 1 | Foundation & Accounts | Basic auth, plans listing, and core project skeleton are in place. | AUTH-01–04, PLAN-01–02 | Users can sign up, log in, view available plans, and create an order shell. |
 | 2 | Payments & Order Automation | Complete    | 2026-03-17 | Successful PIX/crypto payments reliably transition orders to “paid” and trigger provisioning, with one active VM per user. |
 | 3 | 3/3 | Complete   | 2026-03-17 | Paid orders result in ready‑to‑use Windows GPU VMs that are automatically destroyed when time expires. |
-| 4 | User Dashboard Experience (1/2) | Users can manage and connect to their machines self‑service. | DASH-01–05 | Users see status and remaining time clearly and can connect via Parsec from the dashboard without admin help. |
+| 4 | 2/2 | Complete   | 2026-03-17 | Users see status and remaining time clearly and can connect via Parsec from the dashboard without admin help. |
 | 5 | Admin Operations & Safety | Internal operations, monitoring, and basic abuse controls. | ADMIN-01–05, SAFE-01–04 | Admins can operate the fleet safely, with logs and basic abuse/suspicious activity visibility. |
 
 ---
@@ -131,11 +131,11 @@ DASH-01, DASH-02, DASH-03, DASH-04, DASH-05
 4. Users can issue start/stop commands from the dashboard and see the VM/state reflect those changes.
 5. Users can view a simple history of past orders and basic usage logs (e.g. start/end timestamps).
 
-**Plans:** 2 plans (1/2 complete)
+**Plans:** 2/2 plans complete
 
 Plans:
 - [x] 04-01-PLAN.md — Wave 1: Dashboard shell, VM list, status, remaining time, polling
-- [ ] 04-02-PLAN.md — Wave 2: Connect/Parsec, start-stop placeholder, order history with usage
+- [x] 04-02-PLAN.md — Wave 2: Connect/Parsec, start-stop placeholder, order history with usage
 
 ---
 

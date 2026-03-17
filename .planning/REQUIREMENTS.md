@@ -42,9 +42,9 @@ Requirements for initial release. Each will map to roadmap phases.
 
 - [x] **DASH-01**: User can see a list of their active and recent VMs in the dashboard.
 - [x] **DASH-02**: Dashboard shows current VM status (provisioning, running, stopping, terminated) and remaining time for active VMs.
-- [ ] **DASH-03**: User can start and stop their VM from the dashboard, within allowed rules (e.g. time continues counting down while the VM is running).
-- [ ] **DASH-04**: When a VM is ready, the dashboard shows connection details and a “Connect” button that launches the Parsec connection flow.
-- [ ] **DASH-05**: Users can see their order history and high‑level usage records for compliance/audit.
+- [x] **DASH-03**: User can start and stop their VM from the dashboard, within allowed rules (e.g. time continues counting down while the VM is running).
+- [x] **DASH-04**: When a VM is ready, the dashboard shows connection details and a “Connect” button that launches the Parsec connection flow.
+- [x] **DASH-05**: Users can see their order history and high‑level usage records for compliance/audit.
 
 ### Admin Panel & Operations
 
@@ -117,9 +117,9 @@ Which phases cover which requirements. To be updated when the roadmap is created
 | VM-07   | Phase 3 | Complete |
 | DASH-01 | Phase 4 | Pending |
 | DASH-02 | Phase 4 | Pending |
-| DASH-03 | Phase 4 | Pending |
-| DASH-04 | Phase 4 | Pending |
-| DASH-05 | Phase 4 | Pending |
+| DASH-03 | Phase 4 | Complete |
+| DASH-04 | Phase 4 | Complete |
+| DASH-05 | Phase 4 | Complete |
 | ADMIN-01 | Phase 5 | Pending |
 | ADMIN-02 | Phase 5 | Pending |
 | ADMIN-03 | Phase 5 | Pending |
