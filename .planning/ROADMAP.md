@@ -161,6 +161,13 @@ ADMIN-01, ADMIN-02, ADMIN-03, ADMIN-04, ADMIN-05, SAFE-01, SAFE-02, SAFE-03, SAF
 4. All critical actions are logged with user/admin identity, timestamps, and relevant context, and can be searched or filtered.
 5. Basic suspicious‑activity signals (e.g. repeated failures, unusual restart patterns) are visible so you can manually intervene.
 
+**Plans:** 3 plans
+
+Plans:
+- [ ] 05-01-PLAN.md — Admin foundation (isAdmin, requireAdmin, /admin shell)
+- [ ] 05-02-PLAN.md — ActionLog, VM list, terminate API and UI
+- [ ] 05-03-PLAN.md — Health, logs, abuse signals, wire ActionLog to provisioning/teardown
+
 ---
 
 ## Next Steps
