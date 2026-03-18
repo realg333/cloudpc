@@ -3,15 +3,7 @@ import { prisma } from '@/lib/db';
 import { verifyPassword } from '@/lib/auth/password';
 import { createSession, setPending2FA } from '@/lib/auth/session';
 import { getTwoFactorSecret } from '@/lib/auth/twoFactor';
-
-function getBaseUrl(request: NextRequest): string {
-  const forwardedHost = request.headers.get('x-forwarded-host');
-  const forwardedProto = request.headers.get('x-forwarded-proto');
-  if (forwardedHost && forwardedProto) {
-    return `${forwardedProto}://${forwardedHost}`;
-  }
-  return new URL(request.url).origin;
-}
+import { getBaseUrl } from '@/lib/auth/getBaseUrl';
 
 export async function POST(request: NextRequest) {
   const formData = await request.formData();

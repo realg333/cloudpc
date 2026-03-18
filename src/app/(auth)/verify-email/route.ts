@@ -1,10 +1,12 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { prisma } from '@/lib/db';
+import { getBaseUrl } from '@/lib/auth/getBaseUrl';
 
 export async function GET(request: NextRequest) {
+  const baseUrl = getBaseUrl(request);
   const token = request.nextUrl.searchParams.get('token');
   if (!token) {
-    return NextResponse.redirect(new URL('/login?error=missing_token', request.url));
+    return NextResponse.redirect(new URL('/login?error=missing_token', baseUrl));
   }
 
   const verification = await prisma.emailVerificationToken.findUnique({
@@ -13,7 +15,7 @@ export async function GET(request: NextRequest) {
   });
 
   if (!verification || verification.usedAt || verification.expiresAt < new Date()) {
-    return NextResponse.redirect(new URL('/login?error=invalid_token', request.url));
+    return NextResponse.redirect(new URL('/login?error=invalid_token', baseUrl));
   }
 
   await prisma.$transaction([
@@ -27,5 +29,5 @@ export async function GET(request: NextRequest) {
     }),
   ]);
 
-  return NextResponse.redirect(new URL('/login?verified=1', request.url));
+  return NextResponse.redirect(new URL('/login?verified=1', baseUrl));
 }

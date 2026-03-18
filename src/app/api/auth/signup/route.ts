@@ -2,11 +2,13 @@ import { NextRequest, NextResponse } from 'next/server';
 import { prisma } from '@/lib/db';
 import { hashPassword } from '@/lib/auth/password';
 import { sendVerificationEmail } from '@/lib/email';
+import { getBaseUrl } from '@/lib/auth/getBaseUrl';
 import { randomBytes } from 'crypto';
 
 const VERIFICATION_EXPIRY_HOURS = 24;
 
 export async function POST(request: NextRequest) {
+  const baseUrl = getBaseUrl(request);
   try {
     const formData = await request.formData();
     const email = (formData.get('email') as string)?.trim()?.toLowerCase();
@@ -14,18 +16,18 @@ export async function POST(request: NextRequest) {
     const passwordConfirm = formData.get('passwordConfirm') as string;
 
     if (!email || !password) {
-      return NextResponse.redirect(new URL('/signup?error=missing', request.url));
+      return NextResponse.redirect(new URL('/signup?error=missing', baseUrl));
     }
     if (password !== passwordConfirm) {
-      return NextResponse.redirect(new URL('/signup?error=password_mismatch', request.url));
+      return NextResponse.redirect(new URL('/signup?error=password_mismatch', baseUrl));
     }
     if (password.length < 8) {
-      return NextResponse.redirect(new URL('/signup?error=password_short', request.url));
+      return NextResponse.redirect(new URL('/signup?error=password_short', baseUrl));
     }
 
     const existing = await prisma.user.findUnique({ where: { email } });
     if (existing) {
-      return NextResponse.redirect(new URL('/signup?error=email_taken', request.url));
+      return NextResponse.redirect(new URL('/signup?error=email_taken', baseUrl));
     }
 
     const passwordHash = await hashPassword(password);
@@ -39,14 +41,14 @@ export async function POST(request: NextRequest) {
       data: { userId: user.id, token, expiresAt },
     });
 
-    const verifyUrl = new URL('/verify-email', request.url);
+    const verifyUrl = new URL('/verify-email', baseUrl);
     verifyUrl.searchParams.set('token', token);
 
     await sendVerificationEmail({ to: email, verifyUrl: verifyUrl.toString() });
 
-    return NextResponse.redirect(new URL('/login?signup=1', request.url));
+    return NextResponse.redirect(new URL('/login?signup=1', baseUrl));
   } catch (e) {
     console.error('Signup error', e);
-    return NextResponse.redirect(new URL('/signup?error=server', request.url));
+    return NextResponse.redirect(new URL('/signup?error=server', baseUrl));
   }
 }

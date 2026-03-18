@@ -1,11 +1,13 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { prisma } from '@/lib/db';
 import { sendVerificationEmail } from '@/lib/email';
+import { getBaseUrl } from '@/lib/auth/getBaseUrl';
 import { randomBytes } from 'crypto';
 
 const VERIFICATION_EXPIRY_HOURS = 24;
 
 export async function POST(request: NextRequest) {
+  const baseUrl = getBaseUrl(request);
   try {
     const formData = await request.formData();
     const email = (formData.get('email') as string)?.trim()?.toLowerCase();
@@ -32,7 +34,7 @@ export async function POST(request: NextRequest) {
       }),
     ]);
 
-    const verifyUrl = new URL('/verify-email', request.url);
+    const verifyUrl = new URL('/verify-email', baseUrl);
     verifyUrl.searchParams.set('token', token);
 
     await sendVerificationEmail({ to: email, verifyUrl: verifyUrl.toString() });

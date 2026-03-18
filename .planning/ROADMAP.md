@@ -40,6 +40,7 @@ Full details: [milestones/v1.1-ROADMAP.md](milestones/v1.1-ROADMAP.md)
 **Phase Numbering:** Phases 8–11 (continuing from v1.1)
 
 - [x] **Phase 8: Environment & Cost Foundation** — .env, CRON, webhooks reachable, 1 VM per user guardrails (2 plans) (completed 2026-03-17)
+- [x] **Phase 8.1: Session persistence fix** — getBaseUrl em redirects, SESSION_SECRET, sessão persistente (completed 2026-03-18)
 - [ ] **Phase 9: Real Payment Gateway** — PIX + crypto, webhook validation, idempotent handling
 - [ ] **Phase 10: Real Vultr Integration** — Production API, MachineProfiles, Parsec-ready instances
 - [ ] **Phase 11: End-to-End & Teardown** — Full flow validated, failure handling, orphan prevention, observability
@@ -61,6 +62,19 @@ Full details: [milestones/v1.1-ROADMAP.md](milestones/v1.1-ROADMAP.md)
 Plans:
 - [ ] 08-01-PLAN.md — Environment & deployment (.env.example, vercel.json cron)
 - [ ] 08-02-PLAN.md — Cost guardrails (VULTR_MAX_ACTIVE_VMS=10, hasOtherActiveOrder gate)
+
+### Phase 08.1: Session persistence fix (INSERTED)
+
+**Goal:** Sessão de autenticação persiste corretamente; usuário não é redirecionado para login indevidamente.
+**Depends on:** Phase 8
+**Requirements**: AUTH-04 (session persists across refresh)
+**Success Criteria** (what must be TRUE):
+  1. `getBaseUrl(request)` usado em todos os redirects (logout, 2FA verify, signup, verify-email) — evita URL interna em Vercel
+  2. `SESSION_SECRET` documentado e verificado em produção
+  3. Sessão mantida ao navegar entre páginas; sem loop de redirect; sem redirect indevido após login
+**Plans:** 1/1 plans complete
+
+Context: [SESSION_SCAN_REPORT.md](../SESSION_SCAN_REPORT.md)
 
 ### Phase 9: Real Payment Gateway
 **Goal**: Real payment intents (PIX + crypto) with validated webhooks and idempotent handling.
@@ -101,11 +115,12 @@ Plans:
 ## Progress
 
 **Execution Order:**
-Phases 8–9 and 8–10 can run in parallel after Phase 8; Phase 11 requires both 9 and 10.
+Phase 8.1 runs after Phase 8 (urgent session fix). Phases 8.1–9 and 8.1–10 can run in parallel; Phase 11 requires both 9 and 10.
 
 | Phase | Milestone | Plans Complete | Status | Completed |
 |-------|-----------|----------------|--------|-----------|
-| 8. Environment & Cost Foundation | 2/2 | Complete   | 2026-03-17 | - |
+| 8. Environment & Cost Foundation | 2/2 | Complete | 2026-03-17 | - |
+| **8.1. Session persistence fix** | v1.2 | 1/1 | Complete | 2026-03-18 |
 | 9. Real Payment Gateway | v1.2 | 0/0 | Not started | - |
 | 10. Real Vultr Integration | v1.2 | 0/0 | Not started | - |
 | 11. End-to-End & Teardown | v1.2 | 0/0 | Not started | - |

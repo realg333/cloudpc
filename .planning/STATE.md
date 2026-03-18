@@ -5,13 +5,13 @@ milestone_name: Real Infra & Payments Integration
 current_plan: Not started
 status: planning
 stopped_at: Completed 08-01-PLAN.md
-last_updated: "2026-03-17T17:24:36.003Z"
+last_updated: "2026-03-18T15:27:55.392Z"
 last_activity: 2026-03-17
 progress:
-  total_phases: 4
-  completed_phases: 1
-  total_plans: 2
-  completed_plans: 2
+  total_phases: 5
+  completed_phases: 2
+  total_plans: 3
+  completed_plans: 3
   percent: 100
 ---
 
@@ -43,6 +43,7 @@ See: `.planning/PROJECT.md` (updated 2026-03-17)
 
 ## Accumulated Context
 
+- Phase 8.1 inserted after Phase 8: Session persistence fix (URGENT) — sessão não mantém, sempre pede relogar
 - v1.0: Auth, plans, payments, VM provisioning, dashboard, admin panel, abuse controls
 - v1.1: Landing page dark theme, trust strip, hero CTA; dashboard dark mode, status clarity, countdown/progress, dominant Connect CTA
 - Phase 6 decisions: Trust strip after hero, secondary CTA "Como funciona", text-slate-400 for contrast
