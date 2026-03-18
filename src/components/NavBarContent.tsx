@@ -50,23 +50,23 @@ export default function NavBarContent({ isLoggedIn, isAdmin }: NavBarContentProp
               Início
             </Link>
             {isAdmin && (
-              <Link href="/admin" className={adminClasses}>
+              <Link href="/admin" className={adminClasses} prefetch={false}>
                 Admin
               </Link>
             )}
             <Link href="/plans" className={linkBase}>
               Planos
             </Link>
-            <Link href="/dashboard" className={linkBase}>
+            <Link href="/dashboard" className={linkBase} prefetch={false}>
               Minhas Máquinas
             </Link>
-            <Link href="/orders" className={linkBase}>
+            <Link href="/orders" className={linkBase} prefetch={false}>
               Pedidos
             </Link>
-            <Link href="/billing" className={linkBase}>
+            <Link href="/billing" className={linkBase} prefetch={false}>
               Cobranças
             </Link>
-            <Link href="/profile" className={linkBase}>
+            <Link href="/profile" className={linkBase} prefetch={false}>
               Perfil
             </Link>
           </>
@@ -80,7 +80,7 @@ export default function NavBarContent({ isLoggedIn, isAdmin }: NavBarContentProp
                 Ver planos
               </Link>
             )}
-            <Link href="/logout" className={linkBase}>
+            <Link href="/logout" className={linkBase} prefetch={false}>
               Sair
             </Link>
           </>
