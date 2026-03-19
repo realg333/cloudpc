@@ -12,10 +12,11 @@ export interface SendVerificationEmailParams {
 /**
  * Sends the email verification link to the user.
  * Requires RESEND_API_KEY in .env. If not set, logs the link to console (dev fallback).
+ * @returns true if email was sent, false if failed or API key missing
  */
-export async function sendVerificationEmail({ to, verifyUrl }: SendVerificationEmailParams): Promise<void> {
+export async function sendVerificationEmail({ to, verifyUrl }: SendVerificationEmailParams): Promise<boolean> {
   if (resend) {
-    const { error } = await resend.emails.send({
+    const { data, error } = await resend.emails.send({
       from: FROM_EMAIL,
       to: [to],
       subject: 'Ative sua conta - Cloud Gaming VPS Brazil',
@@ -29,10 +30,11 @@ export async function sendVerificationEmail({ to, verifyUrl }: SendVerificationE
       `,
     });
     if (error) {
-      console.error('[email] Failed to send verification:', error);
-      // Don't throw - user was created; they can request a new link later
+      console.error('[email] Resend error:', JSON.stringify(error));
+      return false;
     }
-  } else {
-    console.warn('[email] RESEND_API_KEY not set. Verification link (add RESEND_API_KEY to .env to send emails):', verifyUrl);
+    return !!data?.id;
   }
+  console.warn('[email] RESEND_API_KEY not set. Verification link (add RESEND_API_KEY to .env to send emails):', verifyUrl);
+  return false;
 }

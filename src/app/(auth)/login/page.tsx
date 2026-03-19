@@ -5,7 +5,7 @@ import LoginForm from './LoginForm';
 export default async function LoginPage({
   searchParams,
 }: {
-  searchParams: Promise<{ redirect?: string; error?: string; verified?: string; signup?: string; email?: string }>;
+  searchParams: Promise<{ redirect?: string; error?: string; verified?: string; signup?: string; email?: string; email_sent?: string; email_failed?: string }>;
 }) {
   const session = await getSessionFromCookies();
   const params = await searchParams;
@@ -23,6 +23,7 @@ export default async function LoginPage({
       verifiedParam={params.verified}
       signupParam={params.signup}
       emailParam={params.email ?? ''}
+      emailFailedParam={params.email_failed === '1'}
     />
   );
 }

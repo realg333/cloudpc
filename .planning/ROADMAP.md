@@ -41,6 +41,7 @@ Full details: [milestones/v1.1-ROADMAP.md](milestones/v1.1-ROADMAP.md)
 
 - [x] **Phase 8: Environment & Cost Foundation** — .env, CRON, webhooks reachable, 1 VM per user guardrails (2 plans) (completed 2026-03-17)
 - [x] **Phase 8.1: Session persistence fix** — getBaseUrl em redirects, SESSION_SECRET, sessão persistente (completed 2026-03-18)
+- [ ] **Phase 8.1.1: Session + email fix** — sessão ainda não persiste; emails não enviam (2 plans)
 - [ ] **Phase 9: Real Payment Gateway** — PIX + crypto, webhook validation, idempotent handling
 - [ ] **Phase 10: Real Vultr Integration** — Production API, MachineProfiles, Parsec-ready instances
 - [ ] **Phase 11: End-to-End & Teardown** — Full flow validated, failure handling, orphan prevention, observability
@@ -75,6 +76,21 @@ Plans:
 **Plans:** 1/1 plans complete
 
 Context: [SESSION_SCAN_REPORT.md](../SESSION_SCAN_REPORT.md)
+
+### Phase 08.1.1: Session persistence and email delivery fix (INSERTED)
+
+**Goal:** Sessão persiste ao navegar; emails de verificação são enviados em produção.
+**Depends on:** Phase 8.1
+**Requirements**: AUTH-04, signup flow (email verification)
+**Success Criteria** (what must be TRUE):
+  1. Sessão mantida ao clicar em Minhas Máquinas, Pedidos, Perfil — sem redirect para login
+  2. Signup envia email de verificação; usuário recebe link e consegue ativar conta
+  3. RESEND_API_KEY configurada no Vercel; verifyUrl usa base URL pública
+**Plans:** 2 plans (08.1.1-01 diagnostics + email, 08.1.1-02 middleware + login feedback)
+
+**Problemas reportados:**
+- Phase 8.1 (getBaseUrl + prefetch=false) não resolveu sessão
+- Emails não estão sendo enviados; criar perfil falha
 
 ### Phase 9: Real Payment Gateway
 **Goal**: Real payment intents (PIX + crypto) with validated webhooks and idempotent handling.
@@ -121,6 +137,7 @@ Phase 8.1 runs after Phase 8 (urgent session fix). Phases 8.1–9 and 8.1–10 c
 |-------|-----------|----------------|--------|-----------|
 | 8. Environment & Cost Foundation | 2/2 | Complete | 2026-03-17 | - |
 | **8.1. Session persistence fix** | v1.2 | 1/1 | Complete | 2026-03-18 |
+| **8.1.1. Session + email fix** | v1.2 | 0/2 | Not started | - |
 | 9. Real Payment Gateway | v1.2 | 0/0 | Not started | - |
 | 10. Real Vultr Integration | v1.2 | 0/0 | Not started | - |
 | 11. End-to-End & Teardown | v1.2 | 0/0 | Not started | - |

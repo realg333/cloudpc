@@ -44,9 +44,10 @@ export async function POST(request: NextRequest) {
     const verifyUrl = new URL('/verify-email', baseUrl);
     verifyUrl.searchParams.set('token', token);
 
-    await sendVerificationEmail({ to: email, verifyUrl: verifyUrl.toString() });
+    const emailSent = await sendVerificationEmail({ to: email, verifyUrl: verifyUrl.toString() });
+    const emailParam = emailSent ? 'email_sent=1' : 'email_failed=1';
 
-    return NextResponse.redirect(new URL('/login?signup=1', baseUrl));
+    return NextResponse.redirect(new URL(`/login?signup=1&${emailParam}`, baseUrl));
   } catch (e) {
     console.error('Signup error', e);
     return NextResponse.redirect(new URL('/signup?error=server', baseUrl));

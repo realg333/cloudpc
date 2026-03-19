@@ -1,4 +1,4 @@
-import { cookies } from 'next/headers';
+import { cookies, headers } from 'next/headers';
 import { SignJWT, jwtVerify } from 'jose';
 import type { NextRequest, NextResponse } from 'next/server';
 import { prisma } from '@/lib/db';
@@ -6,6 +6,7 @@ import type { User, Session } from '@prisma/client';
 
 const SESSION_COOKIE = 'session';
 const SESSION_DURATION_HOURS = 8;
+const SESSION_ID_HEADER = 'x-session-id';
 
 function getSecret(): Uint8Array {
   const secret = process.env.SESSION_SECRET;
@@ -52,20 +53,45 @@ export async function getSession(request: NextRequest): Promise<{ user: User; se
 }
 
 export async function getSessionFromCookies(): Promise<{ user: User; session: Session } | null> {
+  const debug = process.env.SESSION_DEBUG === 'true';
+
+  // Prefer session ID from middleware (bypasses cookies() if set)
+  const h = await headers();
+  const sessionIdFromHeader = h.get(SESSION_ID_HEADER);
+  if (sessionIdFromHeader) {
+    try {
+      const session = await prisma.session.findUnique({
+        where: { id: sessionIdFromHeader },
+        include: { user: true },
+      });
+      if (session && session.expiresAt >= new Date()) {
+        if (debug) console.warn('[session-debug] session from header: found');
+        return { user: session.user, session };
+      }
+      if (debug) console.warn('[session-debug] session from header: not found or expired');
+    } catch (e) {
+      if (debug) console.warn('[session-debug] session from header: db error', e);
+    }
+  }
+
   const cookieStore = await cookies();
   const token = cookieStore.get(SESSION_COOKIE)?.value;
+  if (debug) console.warn('[session-debug] cookie present:', !!token);
   if (!token) return null;
   try {
     const { payload } = await jwtVerify(token, getSecret());
     const sessionId = payload.sessionId as string;
+    if (debug) console.warn('[session-debug] jwt valid, sessionId:', !!sessionId);
     if (!sessionId) return null;
     const session = await prisma.session.findUnique({
       where: { id: sessionId },
       include: { user: true },
     });
+    if (debug) console.warn('[session-debug] db lookup:', session ? 'found' : 'not found', session && session.expiresAt < new Date() ? '(expired)' : '');
     if (!session || session.expiresAt < new Date()) return null;
     return { user: session.user, session };
-  } catch {
+  } catch (e) {
+    if (debug) console.warn('[session-debug] jwt verify failed:', e instanceof Error ? e.message : 'unknown');
     return null;
   }
 }

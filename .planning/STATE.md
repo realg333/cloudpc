@@ -43,6 +43,7 @@ See: `.planning/PROJECT.md` (updated 2026-03-17)
 
 ## Accumulated Context
 
+- Phase 8.1.1 inserted after Phase 8.1: Session + email fix (URGENT) — sessão ainda não persiste; emails não enviam; criar perfil falha
 - Phase 8.1 inserted after Phase 8: Session persistence fix (URGENT) — sessão não mantém, sempre pede relogar
 - v1.0: Auth, plans, payments, VM provisioning, dashboard, admin panel, abuse controls
 - v1.1: Landing page dark theme, trust strip, hero CTA; dashboard dark mode, status clarity, countdown/progress, dominant Connect CTA

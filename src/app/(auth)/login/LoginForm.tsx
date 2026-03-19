@@ -9,6 +9,7 @@ interface LoginFormProps {
   verifiedParam?: string;
   signupParam?: string;
   emailParam?: string;
+  emailFailedParam?: boolean;
 }
 
 export default function LoginForm({
@@ -17,12 +18,13 @@ export default function LoginForm({
   verifiedParam,
   signupParam,
   emailParam = '',
+  emailFailedParam = false,
 }: LoginFormProps) {
   const [resendEmail, setResendEmail] = useState(emailParam);
   const [resendStatus, setResendStatus] = useState<'idle' | 'loading' | 'success' | 'error'>('idle');
   const [resendMessage, setResendMessage] = useState('');
 
-  const showResend = signupParam === '1' || errorParam === 'unverified';
+  const showResend = signupParam === '1' || errorParam === 'unverified' || emailFailedParam;
 
   const errorMessage =
     errorParam === 'invalid'
@@ -64,8 +66,13 @@ export default function LoginForm({
   return (
     <div className="mx-auto max-w-md">
       <h1 className="mb-6 text-2xl font-bold text-gray-900">Entrar</h1>
-      {signupParam === '1' && (
+      {signupParam === '1' && !emailFailedParam && (
         <p className="mb-4 text-sm text-green-600">Conta criada. Verifique seu e-mail e depois entre aqui.</p>
+      )}
+      {signupParam === '1' && emailFailedParam && (
+        <p className="mb-4 text-sm text-amber-600">
+          Conta criada, mas não foi possível enviar o e-mail de ativação. Use o formulário abaixo para solicitar o reenvio.
+        </p>
       )}
       {verifiedParam === '1' && (
         <p className="mb-4 text-sm text-green-600">E-mail verificado. Você já pode entrar.</p>
