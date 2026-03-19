@@ -80,9 +80,9 @@ export default function NavBarContent({ isLoggedIn, isAdmin }: NavBarContentProp
                 Ver planos
               </Link>
             )}
-            <Link href="/logout" className={linkBase} prefetch={false}>
+            <a href="/logout" className={linkBase}>
               Sair
-            </Link>
+            </a>
           </>
         ) : (
           <>
