@@ -1,6 +1,6 @@
 import type { PrismaClient } from '@prisma/client';
+import { isValidBrCpfCnpjLength, PAYER_DOCUMENT_REQUIRED } from '@/lib/br-tax-id';
 import type { AsaasClient } from './asaas-client';
-import { readAsaasDefaultCustomerDocumentRaw } from './payment-env';
 
 function asRecord(v: unknown): Record<string, unknown> | null {
   if (v && typeof v === 'object' && !Array.isArray(v)) return v as Record<string, unknown>;
@@ -31,12 +31,13 @@ function displayNameFromEmail(email: string): string {
 
 /**
  * Resolves Asaas customer id for a user: DB → list by externalReference → create.
- * Requires ASAAS_DEFAULT_CUSTOMER_DOCUMENT (CPF/CNPJ digits) when creating a new customer.
+ * Novo cliente: usa `payerDocumentDigits` (CPF 11 ou CNPJ 14 dígitos), vindo do checkout / perfil / env.
  */
 export async function ensureAsaasCustomerId(
   prisma: PrismaClient,
   client: AsaasClient,
-  user: { id: string; email: string; asaasCustomerId: string | null }
+  user: { id: string; email: string; asaasCustomerId: string | null; cpfCnpj: string | null },
+  payerDocumentDigits: string
 ): Promise<string> {
   if (user.asaasCustomerId) {
     return user.asaasCustomerId;
@@ -52,11 +53,9 @@ export async function ensureAsaasCustomerId(
     return fromList;
   }
 
-  const doc = readAsaasDefaultCustomerDocumentRaw()?.replace(/\D/g, '') ?? '';
-  if (!doc || doc.length < 11) {
-    throw new Error(
-      'ASAAS_DEFAULT_CUSTOMER_DOCUMENT is required (CPF/CNPJ digits) to create Asaas customers'
-    );
+  const doc = payerDocumentDigits.replace(/\D/g, '');
+  if (!isValidBrCpfCnpjLength(doc)) {
+    throw new Error(PAYER_DOCUMENT_REQUIRED);
   }
 
   const created = await client.createCustomer({
@@ -73,7 +72,10 @@ export async function ensureAsaasCustomerId(
 
   await prisma.user.update({
     where: { id: user.id },
-    data: { asaasCustomerId: newId },
+    data: {
+      asaasCustomerId: newId,
+      ...(user.cpfCnpj ? {} : { cpfCnpj: doc }),
+    },
   });
 
   return newId;

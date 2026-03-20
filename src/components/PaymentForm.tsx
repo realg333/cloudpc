@@ -2,13 +2,17 @@
 
 import Image from 'next/image';
 import { useState } from 'react';
+import { digitsOnly, isValidBrCpfCnpjLength } from '@/lib/br-tax-id';
 import { looksLikeLegacyMockClientResponse } from '@/lib/payments/payment-invariants';
 
 interface PaymentFormProps {
   orderId: string;
+  /** CPF/CNPJ já salvo no cadastro (só dígitos no banco) */
+  initialPayerDocument?: string;
 }
 
-export default function PaymentForm({ orderId }: PaymentFormProps) {
+export default function PaymentForm({ orderId, initialPayerDocument = '' }: PaymentFormProps) {
+  const [payerDoc, setPayerDoc] = useState(initialPayerDocument);
   const [loading, setLoading] = useState<'pix' | 'crypto' | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [result, setResult] = useState<{
@@ -24,10 +28,23 @@ export default function PaymentForm({ orderId }: PaymentFormProps) {
     setError(null);
     setResult(null);
     try {
+      if (method === 'pix') {
+        const d = digitsOnly(payerDoc);
+        if (payerDoc.trim().length > 0 && !isValidBrCpfCnpjLength(d)) {
+          setError('CPF/CNPJ inválido: informe 11 dígitos (CPF) ou 14 (CNPJ).');
+          setLoading(null);
+          return;
+        }
+      }
+
       const res = await fetch('/api/payments/create', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ orderId, method }),
+        body: JSON.stringify({
+          orderId,
+          method,
+          ...(method === 'pix' ? { cpfCnpj: payerDoc } : {}),
+        }),
       });
       const data = await res.json().catch(() => ({}));
       if (!res.ok) {
@@ -61,6 +78,24 @@ export default function PaymentForm({ orderId }: PaymentFormProps) {
   return (
     <div className="space-y-6">
       <div className="rounded-lg border border-gray-200 bg-white p-6">
+        <label htmlFor="payer-doc" className="mb-2 block text-sm font-medium text-gray-900">
+          CPF ou CNPJ (titular do PIX)
+        </label>
+        <input
+          id="payer-doc"
+          type="text"
+          inputMode="numeric"
+          autoComplete="off"
+          placeholder="Somente números — CPF 11 ou CNPJ 14 dígitos"
+          value={payerDoc}
+          onChange={(e) => setPayerDoc(e.target.value)}
+          disabled={!!loading}
+          className="mb-4 w-full rounded-lg border border-gray-300 px-3 py-2 text-gray-900 placeholder:text-gray-400 focus:border-indigo-500 focus:outline-none focus:ring-1 focus:ring-indigo-500 disabled:bg-gray-50"
+        />
+        <p className="mb-4 text-xs text-gray-500">
+          Usado para cadastrar o titular no gateway de pagamento (Asaas). Pontuação é opcional. Se for seu primeiro
+          PIX, o documento fica associado à sua conta para as próximas cobranças.
+        </p>
         <h3 className="mb-4 text-lg font-semibold text-gray-900">Escolha a forma de pagamento</h3>
         <div className="flex flex-col gap-3 sm:flex-row">
           <button

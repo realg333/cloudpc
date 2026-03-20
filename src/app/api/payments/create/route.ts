@@ -20,6 +20,10 @@ import {
   extractPaymentStatus,
 } from '@/lib/payments/asaas-payment';
 import { assertRealPixPaymentPayload } from '@/lib/payments/payment-invariants';
+import {
+  PAYER_DOCUMENT_REQUIRED,
+  resolvePayerDocumentDigits,
+} from '@/lib/br-tax-id';
 
 const PROVIDER = 'asaas' as const;
 
@@ -41,14 +45,14 @@ export async function POST(request: Request) {
     return paymentJson({ error: 'Não autenticado' }, { status: 401 });
   }
 
-  let body: { orderId?: string; method?: string };
+  let body: { orderId?: string; method?: string; cpfCnpj?: string };
   try {
     body = await request.json();
   } catch {
     return paymentJson({ error: 'Corpo da requisição inválido' }, { status: 400 });
   }
 
-  const { orderId, method } = body;
+  const { orderId, method, cpfCnpj: cpfCnpjFromBody } = body;
   if (!orderId || !method) {
     return paymentJson(
       { error: 'orderId e method são obrigatórios' },
@@ -118,12 +122,17 @@ export async function POST(request: Request) {
   }
 
   const apiKey = sanitizeAsaasApiKey(readEnv('ASAAS_API_KEY'));
-  const docDigits = readAsaasDefaultCustomerDocumentRaw()?.replace(/\D/g, '') ?? '';
+  const envDocDigits = readAsaasDefaultCustomerDocumentRaw()?.replace(/\D/g, '') ?? '';
+  const payerDocumentDigits = resolvePayerDocumentDigits({
+    bodyCpfCnpj: cpfCnpjFromBody,
+    userCpfCnpj: order.user.cpfCnpj,
+    envFallbackDigits: envDocDigits,
+  });
   console.log('[payments/create] provider', {
     provider: PROVIDER,
     asaasApiKeySet: Boolean(apiKey),
     asaasWebhookTokenSet: Boolean(readEnv('ASAAS_WEBHOOK_TOKEN')?.trim()),
-    asaasDefaultDocReady: docDigits.length >= 11,
+    payerDocumentResolved: payerDocumentDigits.length === 11 || payerDocumentDigits.length === 14,
     vercelDeployment: readEnv('VERCEL_DEPLOYMENT_ID') ?? null,
   });
 
@@ -190,20 +199,26 @@ export async function POST(request: Request) {
 
   let asaasCustomerId: string;
   try {
-    asaasCustomerId = await ensureAsaasCustomerId(prisma, createAsaasClient(apiKey, { baseUrl: baseUrl || undefined }), {
-      id: order.user.id,
-      email: order.user.email,
-      asaasCustomerId: order.user.asaasCustomerId,
-    });
+    asaasCustomerId = await ensureAsaasCustomerId(
+      prisma,
+      createAsaasClient(apiKey, { baseUrl: baseUrl || undefined }),
+      {
+        id: order.user.id,
+        email: order.user.email,
+        asaasCustomerId: order.user.asaasCustomerId,
+        cpfCnpj: order.user.cpfCnpj,
+      },
+      payerDocumentDigits
+    );
   } catch (e) {
     console.error('[payments/create] Asaas customer', e);
-    if (e instanceof Error && e.message.includes('ASAAS_DEFAULT_CUSTOMER_DOCUMENT is required')) {
+    if (e instanceof Error && e.message === PAYER_DOCUMENT_REQUIRED) {
       return paymentJson(
         {
           error:
-            'Defina ASAAS_DEFAULT_CUSTOMER_DOCUMENT (CPF ou CNPJ, só dígitos) nas variáveis de ambiente do projeto na Vercel para o ambiente em uso (Produção e/ou Preview), salve e faça um redeploy.',
+            'Informe um CPF (11 dígitos) ou CNPJ (14 dígitos) do titular do pagamento, ou defina ASAAS_DEFAULT_CUSTOMER_DOCUMENT no servidor (fallback).',
         },
-        { status: 500 }
+        { status: 400 }
       );
     }
     if (e instanceof AsaasHttpError) {
@@ -212,8 +227,9 @@ export async function POST(request: Request) {
       if (e.statusCode === 401 || e.statusCode === 403) {
         return paymentJson(
           {
-            error:
-              'A API Asaas recusou a autenticação. Verifique ASAAS_API_KEY e ASAAS_API_BASE_URL (sandbox vs produção) na Vercel.',
+            error: fromApi
+              ? `${fromApi} Confira ASAAS_API_KEY, ASAAS_API_BASE_URL (produção vs sandbox) e o painel Asaas (chave ativa / ambiente).`
+              : 'A API Asaas recusou a autenticação. Verifique ASAAS_API_KEY e ASAAS_API_BASE_URL (sandbox vs produção) na Vercel.',
           },
           { status: 500 }
         );

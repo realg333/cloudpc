@@ -61,7 +61,11 @@ async function fetchWithTimeout(
 }
 
 function resolveBaseUrl(override?: string): string {
-  const raw = (override ?? DEFAULT_BASE_URL).replace(/\/$/, '');
+  let raw = (override ?? DEFAULT_BASE_URL).trim().replace(/\/$/, '');
+  // Paths already include /v3/...; strip accidental /v3 on env (common misconfig)
+  if (raw.endsWith('/v3')) {
+    raw = raw.slice(0, -3);
+  }
   return raw;
 }
 
@@ -84,10 +88,12 @@ export function createAsaasClient(apiKey: string, options?: { baseUrl?: string; 
   const baseUrl = resolveBaseUrl(options?.baseUrl);
   const timeoutMs = options?.timeoutMs ?? DEFAULT_TIMEOUT_MS;
 
-  const headers = {
+  // Asaas exige User-Agent em contas criadas após 11/06/2024 (senão pode retornar 401)
+  const headers: Record<string, string> = {
     access_token: apiKey,
     Accept: 'application/json',
     'Content-Type': 'application/json',
+    'User-Agent': 'CloudPC-CloudGamingVPS/1.0 (Asaas API)',
   };
 
   async function parseJson(res: Response): Promise<unknown> {

@@ -19,9 +19,9 @@ Assim o build usa o Next.js correto. Se a raiz do Git for **só** a pasta do app
 
 ## Variáveis de ambiente (pagamento Asaas)
 
-- `ASAAS_API_KEY`
+- `ASAAS_API_KEY` (produção: `https://api.asaas.com`; sandbox: `https://api-sandbox.asaas.com` — chave e URL têm de ser do **mesmo** ambiente; o Asaas também devolve `invalid_environment` se misturar)
 - `ASAAS_WEBHOOK_TOKEN`
-- `ASAAS_DEFAULT_CUSTOMER_DOCUMENT` (CPF/CNPJ só dígitos, para criar cliente na primeira cobrança)
+- `ASAAS_DEFAULT_CUSTOMER_DOCUMENT` (opcional: fallback se o cliente não preencher CPF/CNPJ no checkout; prioridade: checkout → cadastro `User.cpfCnpj` → esta variável)
 - Opcional: `ASAAS_API_BASE_URL` (sandbox vs produção)
 
 Sem essas chaves, a API de pagamento não gera PIX real.

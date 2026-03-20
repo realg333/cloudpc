@@ -18,7 +18,7 @@ export default async function PayPage({ params }: PayPageProps) {
 
   const order = await prisma.order.findUnique({
     where: { id: orderId },
-    include: { plan: true, machineProfile: true },
+    include: { plan: true, machineProfile: true, user: true },
   });
 
   if (!order || order.userId !== session.user.id) {
@@ -60,7 +60,7 @@ export default async function PayPage({ params }: PayPageProps) {
         </dl>
       </div>
 
-      <PaymentForm orderId={order.id} />
+      <PaymentForm orderId={order.id} initialPayerDocument={order.user.cpfCnpj ?? ''} />
 
       <p className="mt-6">
         <Link href="/orders" className="text-indigo-600 hover:underline">
