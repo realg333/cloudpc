@@ -18,14 +18,23 @@ export async function GET(request: Request) {
     return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
   }
 
-  const destroyed = await processExpiredVms();
-  const processed = await processProvisioningJobs();
-  const reconciliation = await runReconciliation();
+  try {
+    const destroyed = await processExpiredVms();
+    const processed = await processProvisioningJobs();
+    const reconciliation = await runReconciliation();
 
-  return NextResponse.json({
-    ok: true,
-    destroyed,
-    processed,
-    reconciliation,
-  });
+    return NextResponse.json({
+      ok: true,
+      destroyed,
+      processed,
+      reconciliation,
+    });
+  } catch (err) {
+    console.error('[api/cron]', err);
+    const message = err instanceof Error ? err.message : String(err);
+    return NextResponse.json(
+      { ok: false, error: 'Cron handler failed', message },
+      { status: 500 }
+    );
+  }
 }

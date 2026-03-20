@@ -13,6 +13,9 @@ export interface ReconciliationSummary {
   missing: number;
   orphans: number;
   expiredFixed: number;
+  /** Present when Vultr calls were skipped (e.g. missing API key in this environment). */
+  skipped?: boolean;
+  skipReason?: string;
 }
 
 /**
@@ -25,6 +28,15 @@ export async function runReconciliation(): Promise<ReconciliationSummary> {
     orphans: 0,
     expiredFixed: 0,
   };
+
+  if (!process.env.VULTR_API_KEY?.trim()) {
+    console.warn('[reconciliation] VULTR_API_KEY not set; skipping Vultr reconciliation');
+    return {
+      ...summary,
+      skipped: true,
+      skipReason: 'VULTR_API_KEY not set',
+    };
+  }
 
   const dbVms = await prisma.provisionedVm.findMany({
     where: {
