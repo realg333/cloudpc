@@ -43,7 +43,7 @@
 | `RESEND_API_KEY` | Sim* | Para emails de verificação (*se usar verificação) |
 | `VULTR_API_KEY` | Sim* | Para provisionamento (*se usar VMs) |
 | `CRON_SECRET` | Sim* | Para Vercel Cron (*se usar cron) |
-| `MERCADOPAGO_*` | Sim* | Para pagamentos (*se usar Mercado Pago) |
+| `ASAAS_*` | Sim | Pagamentos PIX (Asaas obrigatório) |
 
 ---
 

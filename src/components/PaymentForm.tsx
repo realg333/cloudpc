@@ -1,6 +1,8 @@
 'use client';
 
+import Image from 'next/image';
 import { useState } from 'react';
+import { looksLikeLegacyMockClientResponse } from '@/lib/payments/payment-invariants';
 
 interface PaymentFormProps {
   orderId: string;
@@ -12,6 +14,7 @@ export default function PaymentForm({ orderId }: PaymentFormProps) {
   const [result, setResult] = useState<{
     paymentId: string;
     qrCode?: string;
+    qrCodeBase64?: string;
     redirectUrl?: string;
     method: 'pix' | 'crypto';
   } | null>(null);
@@ -35,9 +38,16 @@ export default function PaymentForm({ orderId }: PaymentFormProps) {
         }
         return;
       }
+      if (data.provider !== 'asaas' || looksLikeLegacyMockClientResponse(data)) {
+        setError(
+          'Resposta de pagamento incompatível (cache ou deploy antigo). Limpe o cache do site, faça redeploy na Vercel com a pasta raiz do app em "CLOUDPC" e variáveis ASAAS_*.'
+        );
+        return;
+      }
       setResult({
         paymentId: data.paymentId,
         qrCode: data.qrCode,
+        qrCodeBase64: data.qrCodeBase64,
         redirectUrl: data.redirectUrl,
         method,
       });
@@ -91,6 +101,18 @@ export default function PaymentForm({ orderId }: PaymentFormProps) {
           <h3 className="mb-3 text-lg font-semibold text-gray-900">
             {result.method === 'crypto' ? 'Pagamento em cripto' : 'QR Code PIX'}
           </h3>
+          {result.qrCodeBase64 && (
+            <div className="mb-4 flex justify-center">
+              <Image
+                src={`data:image/png;base64,${result.qrCodeBase64}`}
+                alt="QR Code PIX"
+                width={256}
+                height={256}
+                unoptimized
+                className="max-w-xs rounded-lg border border-gray-200"
+              />
+            </div>
+          )}
           {result.qrCode && (
             <div className="mb-4 rounded-lg border border-gray-200 bg-gray-50 p-4 font-mono text-sm break-all">
               {result.qrCode}

@@ -1,43 +1,56 @@
-import { describe, it, expect } from 'vitest';
+import { describe, it, expect, vi, beforeEach } from 'vitest';
 import type { CreatePaymentIntentParams } from './gateway';
-import { createMockGateway } from './mock-gateway';
+import { createAsaasGateway } from './asaas-gateway';
 
-describe('PaymentGateway', () => {
-  it('has createPaymentIntent method', () => {
-    const gateway = createMockGateway();
-    expect(typeof gateway.createPaymentIntent).toBe('function');
+describe('PaymentGateway (Asaas)', () => {
+  beforeEach(() => {
+    vi.stubGlobal(
+      'fetch',
+      vi.fn(() =>
+        Promise.resolve({
+          ok: false,
+          status: 500,
+          text: () => Promise.resolve('{}'),
+        } as Response)
+      )
+    );
   });
 
-  it('createMockGateway returns object satisfying PaymentGateway with stub implementations', async () => {
-    const adapter = createMockGateway();
-
-    const result = await adapter.createPaymentIntent({
-      orderId: 'ord-1',
-      amountCents: 10000,
-      currency: 'BRL',
-      method: 'pix',
-    } as CreatePaymentIntentParams);
-    expect(result.paymentId).toMatch(/^mock_\d+$/);
-    expect(result.qrCode).toBe('mock-qr-code');
-
-    expect(adapter.verifyWebhookSignature('body', { 'x-test-signature': 'valid' })).toBe(true);
-    expect(adapter.verifyWebhookSignature('body', {})).toBe(false);
-    expect(adapter.parseWebhookPayload({})).toBe(null);
+  it('createAsaasGateway exposes verifyWebhookSignature and parseWebhookPayload', () => {
+    const gateway = createAsaasGateway({ apiKey: 'k', webhookToken: 't' });
+    expect(typeof gateway.verifyWebhookSignature).toBe('function');
+    expect(typeof gateway.parseWebhookPayload).toBe('function');
   });
 
-  it('createMockGateway parseWebhookPayload accepts { id, event, data: { orderId, status } } and returns WebhookParsed', () => {
-    const adapter = createMockGateway();
-    const payload = {
-      id: 'evt-123',
-      event: 'payment.paid',
-      data: { orderId: 'ord-1', status: 'paid' },
-    };
-    const parsed = adapter.parseWebhookPayload(payload);
-    expect(parsed).toEqual({
-      eventId: 'evt-123',
-      eventType: 'payment.paid',
-      orderId: 'ord-1',
-      status: 'paid',
+  it('parseWebhookPayload accepts Asaas webhook body', () => {
+    const gw = createAsaasGateway({ apiKey: 'k', webhookToken: 't' });
+    const parsed = gw.parseWebhookPayload({
+      id: 'evt_1',
+      event: 'PAYMENT_RECEIVED',
+      payment: {
+        id: 'pay_abc',
+        status: 'RECEIVED',
+        value: 10,
+        externalReference: 'ord-1',
+      },
     });
+    expect(parsed).toMatchObject({
+      source: 'asaas',
+      gatewayChargeId: 'pay_abc',
+      externalReference: 'ord-1',
+      eventType: 'PAYMENT_RECEIVED',
+    });
+  });
+
+  it('createPaymentIntent throws for non-pix (crypto not wired)', async () => {
+    const gw = createAsaasGateway({ apiKey: 'k', webhookToken: 't' });
+    await expect(
+      gw.createPaymentIntent({
+        orderId: 'o1',
+        amountCents: 100,
+        currency: 'BRL',
+        method: 'crypto',
+      } as CreatePaymentIntentParams)
+    ).rejects.toThrow();
   });
 });

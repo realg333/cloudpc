@@ -44,16 +44,24 @@ function isActive(vm: DashboardVm): boolean {
 
 export default function DashboardVmList({ initialVms }: DashboardVmListProps) {
   const [vms, setVms] = useState<DashboardVm[]>(initialVms);
-  const pollStartRef = useRef<number>(Date.now());
+  const pollStartRef = useRef<number | null>(null);
   const intervalRef = useRef<ReturnType<typeof setInterval> | null>(null);
+
+  useEffect(() => {
+    pollStartRef.current = Date.now();
+  }, []);
 
   useEffect(() => {
     if (!hasProvisioningVms(vms)) return;
     if (allTerminal(vms)) return;
-    if (Date.now() - pollStartRef.current > MAX_POLL_DURATION_MS) return;
+    const startedAt = pollStartRef.current;
+    if (startedAt == null) return;
+    if (Date.now() - startedAt > MAX_POLL_DURATION_MS) return;
 
     const poll = async () => {
-      if (Date.now() - pollStartRef.current > MAX_POLL_DURATION_MS) {
+      const t0 = pollStartRef.current;
+      if (t0 == null) return;
+      if (Date.now() - t0 > MAX_POLL_DURATION_MS) {
         if (intervalRef.current) clearInterval(intervalRef.current);
         return;
       }

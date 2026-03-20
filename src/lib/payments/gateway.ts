@@ -1,6 +1,5 @@
 /**
- * Gateway-agnostic payment interface.
- * Plan 01 will add mock adapter; concrete adapters (PIX, crypto) in later plans.
+ * Gateway-agnostic payment interface (Asaas implementation only).
  */
 
 export interface CreatePaymentIntentParams {
@@ -13,22 +12,36 @@ export interface CreatePaymentIntentParams {
 
 export interface CreatePaymentIntentResult {
   paymentId: string;
+  /** External charge id (e.g. Asaas pay_...), persisted on Order.gatewayChargeId */
+  gatewayChargeId?: string;
   qrCode?: string;
+  /** Raw base64 image (without data: prefix) */
+  qrCodeBase64?: string;
   redirectUrl?: string;
 }
 
-export interface WebhookPayload {
-  eventId: string;
+/** Webhook parse result from Asaas. */
+export type ParsedWebhookNotification = {
+  source: 'asaas';
+  notificationId: string;
   eventType: string;
-  orderId: string;
-  status: 'paid' | 'failed' | 'expired';
-}
+  gatewayChargeId: string;
+  externalReference: string | null;
+  valueReais: number | null;
+  paymentStatus: string | null;
+};
 
-/** Alias for WebhookPayload (plan naming) */
-export type WebhookParsed = WebhookPayload;
+export interface WebhookVerifyContext {
+  /** Reserved for gateways that need full request URL (e.g. query params). */
+  requestUrl?: string;
+}
 
 export interface PaymentGateway {
   createPaymentIntent(params: CreatePaymentIntentParams): Promise<CreatePaymentIntentResult>;
-  verifyWebhookSignature(payload: string, headers: Record<string, string>): boolean;
-  parseWebhookPayload(body: unknown): WebhookPayload | null;
+  verifyWebhookSignature(
+    payload: string,
+    headers: Record<string, string>,
+    context?: WebhookVerifyContext
+  ): boolean;
+  parseWebhookPayload(body: unknown): ParsedWebhookNotification | null;
 }

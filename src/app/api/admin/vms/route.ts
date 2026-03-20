@@ -3,8 +3,8 @@ import { getAdminFromRequest } from '@/lib/auth/admin';
 import { prisma } from '@/lib/db';
 import { getRemainingMinutes } from '@/lib/provisioning/time-tracking';
 
-export async function GET(request: Request) {
-  const admin = await getAdminFromRequest(request);
+export async function GET() {
+  const admin = await getAdminFromRequest();
   if ('error' in admin) {
     if (admin.error === 401) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });

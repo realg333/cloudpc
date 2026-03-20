@@ -1,0 +1,176 @@
+/**
+ * HTTP client for Asaas API v3.
+ * @see https://docs.asaas.com/reference
+ */
+
+const DEFAULT_TIMEOUT_MS = 25_000;
+const DEFAULT_BASE_URL = 'https://api.asaas.com';
+
+export class AsaasHttpError extends Error {
+  constructor(
+    message: string,
+    readonly statusCode: number,
+    readonly body?: unknown
+  ) {
+    super(message);
+    this.name = 'AsaasHttpError';
+  }
+}
+
+export class AsaasNetworkError extends Error {
+  constructor(
+    message: string,
+    readonly cause?: unknown
+  ) {
+    super(message);
+    this.name = 'AsaasNetworkError';
+  }
+}
+
+async function fetchWithTimeout(
+  url: string,
+  init: RequestInit,
+  timeoutMs: number
+): Promise<Response> {
+  const controller = new AbortController();
+  const id = setTimeout(() => controller.abort(), timeoutMs);
+  try {
+    return await fetch(url, { ...init, signal: controller.signal });
+  } catch (e) {
+    if ((e as Error).name === 'AbortError') {
+      throw new AsaasNetworkError(`Request timed out after ${timeoutMs}ms`);
+    }
+    throw new AsaasNetworkError('Network error calling Asaas', e);
+  } finally {
+    clearTimeout(id);
+  }
+}
+
+function resolveBaseUrl(override?: string): string {
+  const raw = (override ?? DEFAULT_BASE_URL).replace(/\/$/, '');
+  return raw;
+}
+
+export interface CreateAsaasCustomerInput {
+  name: string;
+  email?: string;
+  cpfCnpj: string;
+  externalReference: string;
+}
+
+export interface CreateAsaasPixPaymentInput {
+  customerId: string;
+  valueReais: number;
+  dueDateYmd: string;
+  externalReference: string;
+  description?: string;
+}
+
+export function createAsaasClient(apiKey: string, options?: { baseUrl?: string; timeoutMs?: number }) {
+  const baseUrl = resolveBaseUrl(options?.baseUrl);
+  const timeoutMs = options?.timeoutMs ?? DEFAULT_TIMEOUT_MS;
+
+  const headers = {
+    access_token: apiKey,
+    Accept: 'application/json',
+    'Content-Type': 'application/json',
+  };
+
+  async function parseJson(res: Response): Promise<unknown> {
+    const text = await res.text();
+    if (!text) return null;
+    try {
+      return JSON.parse(text);
+    } catch {
+      return { raw: text };
+    }
+  }
+
+  return {
+    async listCustomers(params: {
+      email?: string;
+      externalReference?: string;
+      limit?: number;
+    }): Promise<unknown> {
+      const q = new URLSearchParams();
+      if (params.email) q.set('email', params.email);
+      if (params.externalReference) q.set('externalReference', params.externalReference);
+      q.set('limit', String(params.limit ?? 10));
+      const url = `${baseUrl}/v3/customers?${q.toString()}`;
+      const res = await fetchWithTimeout(url, { method: 'GET', headers }, timeoutMs);
+      const json = await parseJson(res);
+      if (!res.ok) {
+        throw new AsaasHttpError(`Asaas list customers failed: ${res.status}`, res.status, json);
+      }
+      return json;
+    },
+
+    async createCustomer(input: CreateAsaasCustomerInput): Promise<unknown> {
+      const body = {
+        name: input.name,
+        email: input.email,
+        cpfCnpj: input.cpfCnpj.replace(/\D/g, ''),
+        externalReference: input.externalReference,
+      };
+      const res = await fetchWithTimeout(
+        `${baseUrl}/v3/customers`,
+        { method: 'POST', headers, body: JSON.stringify(body) },
+        timeoutMs
+      );
+      const json = await parseJson(res);
+      if (!res.ok) {
+        throw new AsaasHttpError(`Asaas create customer failed: ${res.status}`, res.status, json);
+      }
+      return json;
+    },
+
+    async createPixPayment(input: CreateAsaasPixPaymentInput): Promise<unknown> {
+      const body = {
+        customer: input.customerId,
+        billingType: 'PIX',
+        value: input.valueReais,
+        dueDate: input.dueDateYmd,
+        externalReference: input.externalReference,
+        description: input.description,
+      };
+      const res = await fetchWithTimeout(
+        `${baseUrl}/v3/payments`,
+        { method: 'POST', headers, body: JSON.stringify(body) },
+        timeoutMs
+      );
+      const json = await parseJson(res);
+      if (!res.ok) {
+        throw new AsaasHttpError(`Asaas create payment failed: ${res.status}`, res.status, json);
+      }
+      return json;
+    },
+
+    async getPayment(paymentId: string): Promise<unknown> {
+      const res = await fetchWithTimeout(
+        `${baseUrl}/v3/payments/${encodeURIComponent(paymentId)}`,
+        { method: 'GET', headers },
+        timeoutMs
+      );
+      const json = await parseJson(res);
+      if (!res.ok) {
+        throw new AsaasHttpError(`Asaas get payment failed: ${res.status}`, res.status, json);
+      }
+      return json;
+    },
+
+    async getPixQrCode(paymentId: string): Promise<unknown> {
+      const res = await fetchWithTimeout(
+        `${baseUrl}/v3/payments/${encodeURIComponent(paymentId)}/pixQrCode`,
+        { method: 'GET', headers },
+        timeoutMs
+      );
+      const json = await parseJson(res);
+      if (!res.ok) {
+        throw new AsaasHttpError(`Asaas get pix QR failed: ${res.status}`, res.status, json);
+      }
+      return json;
+    },
+  };
+}
+
+export type AsaasClient = ReturnType<typeof createAsaasClient>;

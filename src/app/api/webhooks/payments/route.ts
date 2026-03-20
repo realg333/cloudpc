@@ -1,136 +1,300 @@
-import { NextResponse } from 'next/server';
 import { prisma } from '@/lib/db';
-import { createMockGateway } from '@/lib/payments/mock-gateway';
-import { hasActiveOrder } from '@/lib/orders/concurrency';
+import { getPaymentGateway, readEnv, sanitizeAsaasApiKey } from '@/lib/payments';
+import { createAsaasClient, AsaasHttpError } from '@/lib/payments/asaas-client';
+import {
+  extractExternalReference,
+  extractPaymentStatus,
+  extractPaymentValueReais,
+  mapAsaasWebhookToPipelineStatus,
+  reaisToCents,
+  validateAsaasValueMatchesOrder,
+} from '@/lib/payments/asaas-payment';
+import { runPaymentWebhookPipeline } from '@/lib/payments/webhook-processor';
 
-function mapOutcome(status: string): 'paid' | 'canceled' | 'ignored' {
-  if (status === 'paid') return 'paid';
-  if (status === 'failed' || status === 'expired') return 'canceled';
-  return 'ignored';
+function jsonResponse(body: object, httpStatus: number) {
+  return new Response(JSON.stringify(body), {
+    status: httpStatus,
+    headers: { 'content-type': 'application/json; charset=utf-8' },
+  });
+}
+
+/**
+ * Best-effort public URL for logs (Vercel/proxies set x-forwarded-*; tests use localhost).
+ * Configure APP_URL (e.g. https://cloudpc.vercel.app) so local logs match production host when needed.
+ */
+function effectiveRequestUrl(request: Request): { raw: string; effective: string } {
+  const raw = request.url;
+  let parsed: URL;
+  try {
+    parsed = new URL(raw);
+  } catch {
+    return { raw, effective: raw };
+  }
+
+  const proto =
+    request.headers.get('x-forwarded-proto')?.split(',')[0]?.trim() ||
+    (parsed.protocol === 'https:' ? 'https' : parsed.protocol === 'http:' ? 'http' : 'https');
+  const host =
+    request.headers.get('x-forwarded-host')?.split(',')[0]?.trim() ||
+    request.headers.get('host')?.split(',')[0]?.trim() ||
+    parsed.host;
+
+  const hostLooksPublic =
+    host && host !== 'localhost' && !host.startsWith('127.') && host !== '[::1]';
+  if (hostLooksPublic) {
+    const scheme = proto === 'http' ? 'http' : 'https';
+    return { raw, effective: `${scheme}://${host}${parsed.pathname}${parsed.search}` };
+  }
+
+  const appBase = readEnv('APP_URL')?.trim().replace(/\/$/, '');
+  if (appBase) {
+    try {
+      const base = new URL(appBase.includes('://') ? appBase : `https://${appBase}`);
+      return { raw, effective: `${base.origin}${parsed.pathname}${parsed.search}` };
+    } catch {
+      /* ignore */
+    }
+  }
+
+  return { raw, effective: raw };
+}
+
+/** Log-friendly headers: keeps keys, redacts typical secrets. */
+function redactHeadersForLog(headers: Record<string, string>): Record<string, string> {
+  const sensitive = new Set([
+    'asaas-access-token',
+    'authorization',
+    'cookie',
+    'x-signature',
+    'x-hub-signature',
+  ]);
+  const out: Record<string, string> = {};
+  for (const [k, v] of Object.entries(headers)) {
+    out[k] = sensitive.has(k.toLowerCase()) ? '[REDACTED]' : v;
+  }
+  return out;
 }
 
 export async function POST(request: Request) {
-  const rawBody = await request.text();
-  const gateway = createMockGateway();
   const headers = Object.fromEntries(request.headers.entries());
 
-  if (!gateway.verifyWebhookSignature(rawBody, headers)) {
-    return NextResponse.json({ error: 'Invalid signature' }, { status: 401 });
-  }
+  const { raw: urlRaw, effective: url } = effectiveRequestUrl(request);
+  console.log('[webhook] webhook hit', {
+    method: request.method,
+    url,
+    urlRaw,
+    gateway: 'asaas',
+  });
+  console.log('[webhook] headers (sanitized)', redactHeadersForLog(headers));
 
-  let parsed: unknown;
+  const rawBody = await request.text();
+  console.log('[webhook] raw body', rawBody);
+
+  let gateway;
   try {
-    parsed = JSON.parse(rawBody);
-  } catch {
-    return NextResponse.json({ error: 'Invalid payload' }, { status: 400 });
-  }
-
-  const payload = gateway.parseWebhookPayload(parsed);
-  if (!payload) {
-    return NextResponse.json({ error: 'Invalid payload' }, { status: 400 });
-  }
-
-  const outcome = mapOutcome(payload.status);
-
-  try {
-    await prisma.paymentLog.create({
-      data: {
-        gatewayEventId: payload.eventId,
-        eventType: payload.eventType,
-        orderId: payload.orderId,
-        outcome,
-        metadata: { event: payload.eventType },
-      },
-    });
+    gateway = getPaymentGateway();
   } catch (e) {
-    const err = e as { code?: string };
-    if (err.code === 'P2002') {
-      return NextResponse.json({ received: true }, { status: 200 });
+    console.error('[webhook] reject', { reason: 'gateway_misconfigured', status: 500 }, e);
+    return jsonResponse({ error: 'Payment gateway misconfigured' }, 500);
+  }
+
+  const signatureOk = gateway.verifyWebhookSignature(rawBody, headers, { requestUrl: request.url });
+  console.log('[webhook] signature verify', signatureOk ? 'ok' : 'fail', { gateway: 'asaas' });
+
+  if (!signatureOk) {
+    console.warn('[webhook] reject', {
+      reason: 'invalid_signature',
+      status: 401,
+      hint: 'compare ASAAS_WEBHOOK_TOKEN with asaas-access-token from Asaas webhook config',
+    });
+    return jsonResponse({ error: 'Invalid signature' }, 401);
+  }
+
+  let parsedJson: unknown;
+  try {
+    parsedJson = JSON.parse(rawBody);
+  } catch (err) {
+    console.warn('[webhook] reject', { reason: 'invalid_json', status: 400 }, err);
+    return jsonResponse({ error: 'Invalid payload' }, 400);
+  }
+
+  const parsed = gateway.parseWebhookPayload(parsedJson);
+  if (!parsed) {
+    console.warn('[webhook] reject', {
+      reason: 'payload_parse_failed',
+      status: 400,
+      hint: 'expect Asaas shape: { event, payment: { id, externalReference?, value?, status? } }',
+    });
+    return jsonResponse({ error: 'Invalid payload' }, 400);
+  }
+
+  console.log('[webhook] event parsed', {
+    source: parsed.source,
+    event: parsed.eventType,
+    notificationId: parsed.notificationId,
+    gatewayChargeId: parsed.gatewayChargeId,
+    externalReference: parsed.externalReference,
+    paymentStatus: parsed.paymentStatus,
+    valueReais: parsed.valueReais,
+  });
+
+  console.log('[webhook] branch', 'asaas_pipeline');
+
+  const apiKey = sanitizeAsaasApiKey(readEnv('ASAAS_API_KEY'));
+  if (!apiKey) {
+    console.error('[webhook] reject', { reason: 'asaas_api_key_missing', status: 500 });
+    return jsonResponse({ error: 'Misconfigured' }, 500);
+  }
+
+  let externalRef = parsed.externalReference;
+  let valueReais = parsed.valueReais;
+  let paymentStatus = parsed.paymentStatus;
+
+  if (!externalRef || valueReais == null || !paymentStatus) {
+    const baseUrl = readEnv('ASAAS_API_BASE_URL')?.trim();
+    try {
+      const client = createAsaasClient(apiKey, { baseUrl: baseUrl || undefined });
+      const snap = await client.getPayment(parsed.gatewayChargeId);
+      if (!externalRef) externalRef = extractExternalReference(snap);
+      if (valueReais == null) {
+        const vr = extractPaymentValueReais(snap);
+        if (vr != null) valueReais = vr;
+      }
+      if (!paymentStatus) paymentStatus = extractPaymentStatus(snap);
+    } catch (e) {
+      if (e instanceof AsaasHttpError) {
+        if (e.statusCode === 404) {
+          console.warn('[webhook] reject', {
+            reason: 'asaas_payment_not_found',
+            status: 200,
+            gatewayChargeId: parsed.gatewayChargeId,
+          });
+          return jsonResponse({ received: true }, 200);
+        }
+        if (e.statusCode >= 500 || e.statusCode === 429) {
+          console.error('[webhook] reject', {
+            reason: 'asaas_upstream_error',
+            status: 500,
+            httpStatus: e.statusCode,
+          });
+          return jsonResponse({ error: 'Upstream error' }, 500);
+        }
+        console.error('[webhook] reject', {
+          reason: 'asaas_get_payment_failed',
+          status: 500,
+          httpStatus: e.statusCode,
+          body: e.body,
+        });
+        return jsonResponse({ error: 'Upstream error' }, 500);
+      }
+      console.error('[webhook] reject', { reason: 'asaas_get_payment_exception', status: 500 }, e);
+      return jsonResponse({ error: 'Upstream error' }, 500);
     }
-    throw e;
+  }
+
+  if (!externalRef) {
+    console.warn('[webhook] reject', {
+      reason: 'missing_external_reference_after_enrich',
+      status: 200,
+      gatewayChargeId: parsed.gatewayChargeId,
+    });
+    return jsonResponse({ received: true }, 200);
   }
 
   const order = await prisma.order.findUnique({
-    where: { id: payload.orderId },
-    include: { user: true, plan: true },
+    where: { id: externalRef },
+    include: { plan: true, user: true },
   });
 
-  if (!order || order.status !== 'pending_payment') {
-    return NextResponse.json({ received: true }, { status: 200 });
+  if (!order) {
+    console.warn('[webhook] reject', {
+      reason: 'order_not_found',
+      status: 200,
+      externalReference: externalRef,
+    });
+    return jsonResponse({ received: true }, 200);
   }
 
-  if (payload.status === 'paid') {
-    const hasActive = await hasActiveOrder(order.userId);
-    if (hasActive) {
-      await prisma.order.update({
-        where: { id: order.id },
-        data: { status: 'canceled' },
-      });
-      return NextResponse.json({ received: true }, { status: 200 });
+  if (order.gatewayChargeId && order.gatewayChargeId !== parsed.gatewayChargeId) {
+    console.error('[webhook] reject', {
+      reason: 'gateway_charge_id_mismatch',
+      status: 200,
+      orderId: order.id,
+      expected: order.gatewayChargeId,
+      got: parsed.gatewayChargeId,
+    });
+    const dup = await runPaymentWebhookPipeline(prisma, {
+      notificationId: parsed.notificationId,
+      eventType: parsed.eventType,
+      orderId: order.id,
+      status: 'ignored',
+      gatewayPaymentId: parsed.gatewayChargeId,
+      method: 'pix',
+      logSource: 'asaas',
+    });
+    if (dup === 'duplicate') {
+      return jsonResponse({ received: true }, 200);
+    }
+    return jsonResponse({ received: true }, 200);
+  }
+
+  let pipelineStatus = mapAsaasWebhookToPipelineStatus(parsed.eventType, paymentStatus);
+
+  if (pipelineStatus === 'paid') {
+    const amountCents = order.amountCents ?? order.plan.priceCents ?? 0;
+    if (amountCents <= 0) {
+      pipelineStatus = 'ignored';
+    } else if (valueReais != null) {
+      if (reaisToCents(valueReais) !== amountCents) {
+        console.error('[webhook] reject', {
+          reason: 'amount_mismatch',
+          orderId: order.id,
+          expectedCents: amountCents,
+          valueReais,
+        });
+        pipelineStatus = 'ignored';
+      }
+    } else {
+      try {
+        const client = createAsaasClient(apiKey, {
+          baseUrl: readEnv('ASAAS_API_BASE_URL')?.trim() || undefined,
+        });
+        const snap = await client.getPayment(parsed.gatewayChargeId);
+        if (!validateAsaasValueMatchesOrder(snap, amountCents)) {
+          console.warn('[webhook] reject', {
+            reason: 'amount_validation_failed_from_api',
+            orderId: order.id,
+            gatewayChargeId: parsed.gatewayChargeId,
+          });
+          pipelineStatus = 'ignored';
+        }
+      } catch (err) {
+        console.warn('[webhook] reject', { reason: 'amount_validation_fetch_failed', orderId: order.id }, err);
+        pipelineStatus = 'ignored';
+      }
     }
   }
 
-  if (payload.status === 'paid') {
-    const amountCents = order.amountCents ?? order.plan.priceCents ?? 0;
-    const gatewayPaymentId = payload.eventId;
-    const method = (payload as { method?: string }).method ?? 'pix';
+  console.log('[webhook] asaas pipeline', {
+    orderId: order.id,
+    pipelineStatus,
+    eventType: parsed.eventType,
+    paymentStatus,
+  });
 
-    // Single transaction: order, payment, job, vm. Ensures no paid order without provisioning job.
-    await prisma.$transaction(async (tx) => {
-      await tx.order.update({
-        where: { id: order.id },
-        data: { status: 'paid' },
-      });
+  const dup = await runPaymentWebhookPipeline(prisma, {
+    notificationId: parsed.notificationId,
+    eventType: parsed.eventType,
+    orderId: order.id,
+    status: pipelineStatus,
+    gatewayPaymentId: parsed.gatewayChargeId,
+    method: 'pix',
+    logSource: 'asaas',
+  });
 
-      const existingPayment = await tx.payment.findUnique({ where: { orderId: order.id } });
-      if (!existingPayment) {
-        await tx.payment.create({
-          data: {
-            orderId: order.id,
-            gatewayPaymentId,
-            amountCents,
-            currency: order.currency ?? 'BRL',
-            method: method === 'crypto' ? 'crypto' : 'pix',
-            status: 'completed',
-          },
-        });
-      }
-
-      const existingJob = await tx.provisioningJob.findUnique({ where: { orderId: order.id } });
-      if (!existingJob) {
-        const job = await tx.provisioningJob.create({
-          data: { orderId: order.id, status: 'pending' },
-        });
-        await tx.provisionedVm.create({
-          data: {
-            orderId: order.id,
-            provisioningJobId: job.id,
-            status: 'payment_confirmed',
-            machineProfileId: order.machineProfileId,
-          },
-        });
-      }
-    });
-
-    console.log('[webhook] order paid', {
-      orderId: order.id,
-      userId: order.userId,
-      amount: amountCents,
-      method,
-      eventType: payload.eventType,
-      outcome,
-    });
-  } else if (payload.status === 'failed' || payload.status === 'expired') {
-    await prisma.order.update({
-      where: { id: order.id },
-      data: { status: 'canceled' },
-    });
-    console.log('[webhook] order canceled', {
-      orderId: order.id,
-      eventType: payload.eventType,
-      outcome,
-    });
+  if (dup === 'duplicate') {
+    return jsonResponse({ received: true }, 200);
   }
 
-  return NextResponse.json({ received: true }, { status: 200 });
+  return jsonResponse({ received: true }, 200);
 }

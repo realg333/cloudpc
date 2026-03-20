@@ -1,28 +1,25 @@
 /**
- * Mock webhook payloads for PIX and crypto payment events.
- * Tests pass real orderId when needed.
+ * Asaas-shaped webhook bodies for tests (event + payment object).
  */
 
-export const PIX_SUCCESS = {
-  id: 'evt_pix_123',
-  event: 'payment.completed',
-  data: { orderId: '' as string, status: 'paid' as const },
-};
+export const ASAAS_WEBHOOK_TOKEN = 'my-secret-webhook-token-32chars-min';
 
-export const PIX_FAILED = {
-  id: 'evt_pix_456',
-  event: 'payment.failed',
-  data: { orderId: '' as string, status: 'failed' as const },
-};
-
-export const CRYPTO_SUCCESS = {
-  id: 'evt_crypto_789',
-  event: 'payment.completed',
-  data: { orderId: '' as string, status: 'paid' as const },
-};
-
-export const CRYPTO_EXPIRED = {
-  id: 'evt_crypto_exp',
-  event: 'payment.expired',
-  data: { orderId: '' as string, status: 'expired' as const },
-};
+export function asaasPaymentWebhook(opts: {
+  id?: string;
+  event: string;
+  paymentId: string;
+  orderId: string;
+  valueReais: number;
+  paymentStatus: string;
+}) {
+  return {
+    id: opts.id ?? 'notif_1',
+    event: opts.event,
+    payment: {
+      id: opts.paymentId,
+      externalReference: opts.orderId,
+      value: opts.valueReais,
+      status: opts.paymentStatus,
+    },
+  };
+}

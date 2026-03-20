@@ -33,9 +33,9 @@ export async function requireAdmin(): Promise<{ user: User; session: Session }> 
  * Returns { error: 401 } if unauthenticated, { error: 403 } if not admin,
  * or { user } if admin.
  */
-export async function getAdminFromRequest(
-  _request?: Request
-): Promise<{ error: 401 } | { error: 403 } | { user: User }> {
+export async function getAdminFromRequest(): Promise<
+  { error: 401 } | { error: 403 } | { user: User }
+> {
   const session = await getSessionFromCookies();
   if (!session) return { error: 401 };
   if (!isUserAdmin(session.user)) return { error: 403 };
