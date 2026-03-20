@@ -4,15 +4,11 @@
  */
 
 import { NextResponse } from 'next/server';
+import { isCronAuthorized } from '@/lib/cron-auth';
 import { runReconciliation } from '@/lib/provisioning/reconciliation';
 
 export async function GET(request: Request) {
-  const cronSecret =
-    request.headers.get('x-cron-secret') ??
-    request.headers.get('authorization')?.replace(/^Bearer\s+/i, '');
-  const expected = process.env.CRON_SECRET;
-
-  if (!expected || cronSecret !== expected) {
+  if (!isCronAuthorized(request)) {
     return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
   }
 

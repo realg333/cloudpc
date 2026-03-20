@@ -1,7 +1,8 @@
 # Chama GET /api/cron na Vercel com o mesmo CRON_SECRET do projeto.
 # Configurar em: Settings → Secrets and variables → Actions → Repository secrets
 #   APP_URL     — URL pública sem barra final (ex.: https://cloudpc.vercel.app)
-#   CRON_SECRET — igual ao definido em Vercel (Environment Variables)
+#   CRON_SECRET — byte-a-byte igual ao da Vercel (Production). Redeploy após alterar.
+#     Se 401 Unauthorized: valor diferente entre GitHub e Vercel, ou CRON_SECRET em falta no deploy.
 #
 # Agendamento: UTC. Ajuste o cron abaixo se precisar de outra frequência.
 # Ver: https://docs.github.com/pt/actions/get-started/quickstart
