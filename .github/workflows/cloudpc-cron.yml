@@ -1,0 +1,42 @@
+# Chama GET /api/cron na Vercel com o mesmo CRON_SECRET do projeto.
+# Configurar em: Settings → Secrets and variables → Actions → Repository secrets
+#   APP_URL     — URL pública sem barra final (ex.: https://cloudpc.vercel.app)
+#   CRON_SECRET — igual ao definido em Vercel (Environment Variables)
+#
+# Agendamento: UTC. Ajuste o cron abaixo se precisar de outra frequência.
+# Ver: https://docs.github.com/pt/actions/get-started/quickstart
+
+name: CloudPC cron (API)
+
+on:
+  schedule:
+    # A cada 5 minutos (UTC). GitHub pode atrasar alguns minutos em horários de pico.
+    - cron: "*/5 * * * *"
+  workflow_dispatch:
+
+jobs:
+  call-vercel-cron:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - name: GET /api/cron
+        env:
+          APP_URL: ${{ secrets.APP_URL }}
+          CRON_SECRET: ${{ secrets.CRON_SECRET }}
+        run: |
+          set -euo pipefail
+          if [ -z "${APP_URL:-}" ] || [ -z "${CRON_SECRET:-}" ]; then
+            echo "::error::Defina os secrets APP_URL e CRON_SECRET no repositório (Settings → Secrets → Actions)."
+            exit 1
+          fi
+          URL="${APP_URL%/}/api/cron"
+          echo "Calling $URL"
+          HTTP_CODE=$(curl -sS -o body.json -w "%{http_code}" \
+            -H "Authorization: Bearer ${CRON_SECRET}" \
+            "$URL")
+          cat body.json
+          echo
+          if [ "$HTTP_CODE" != "200" ]; then
+            echo "::error::HTTP $HTTP_CODE (esperado 200)"
+            exit 1
+          fi
