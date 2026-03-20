@@ -1,5 +1,5 @@
 import { prisma } from '@/lib/db';
-import { getPaymentGateway, readEnv, sanitizeAsaasApiKey } from '@/lib/payments';
+import { getPaymentGateway, readAsaasApiKeyRaw, readEnv, sanitizeAsaasApiKey } from '@/lib/payments';
 import { createAsaasClient, AsaasHttpError } from '@/lib/payments/asaas-client';
 import {
   extractExternalReference,
@@ -118,6 +118,21 @@ export async function POST(request: Request) {
     return jsonResponse({ error: 'Invalid payload' }, 400);
   }
 
+  const topLevel =
+    parsedJson && typeof parsedJson === 'object' && !Array.isArray(parsedJson)
+      ? (parsedJson as Record<string, unknown>)
+      : null;
+  const eventName = typeof topLevel?.event === 'string' ? topLevel.event : '';
+  /** Chave API desativada/expirada — não é evento de pagamento; ack 200 para o Asaas parar retries */
+  if (eventName.startsWith('ACCESS_TOKEN')) {
+    console.warn('[webhook] asaas token lifecycle (not a payment)', {
+      event: eventName,
+      hint:
+        'ACCESS_TOKEN_DISABLED → reative a chave em Integrações > API Key ou gere nova e atualize ASAAS_API_KEY na Vercel (401 nas chamadas até corrigir).',
+    });
+    return jsonResponse({ received: true }, 200);
+  }
+
   const parsed = gateway.parseWebhookPayload(parsedJson);
   if (!parsed) {
     console.warn('[webhook] reject', {
@@ -140,7 +155,7 @@ export async function POST(request: Request) {
 
   console.log('[webhook] branch', 'asaas_pipeline');
 
-  const apiKey = sanitizeAsaasApiKey(readEnv('ASAAS_API_KEY'));
+  const apiKey = sanitizeAsaasApiKey(readAsaasApiKeyRaw() ?? readEnv('ASAAS_API_KEY'));
   if (!apiKey) {
     console.error('[webhook] reject', { reason: 'asaas_api_key_missing', status: 500 });
     return jsonResponse({ error: 'Misconfigured' }, 500);

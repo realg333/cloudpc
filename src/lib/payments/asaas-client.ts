@@ -27,18 +27,31 @@ export class AsaasNetworkError extends Error {
   }
 }
 
+function firstAsaasErrorEntry(body: unknown): Record<string, unknown> | null {
+  const o = body && typeof body === 'object' && !Array.isArray(body) ? (body as Record<string, unknown>) : null;
+  if (!o) return null;
+  const errors = o.errors;
+  if (!Array.isArray(errors) || errors.length === 0) return null;
+  const first = errors[0];
+  if (first && typeof first === 'object' && first !== null) return first as Record<string, unknown>;
+  return null;
+}
+
+/** `code` + `description` do primeiro item de `errors[]` (logs e mensagens ao utilizador). */
+export function extractAsaasFirstErrorFields(body: unknown): { code?: string; description?: string } {
+  const e = firstAsaasErrorEntry(body);
+  if (!e) return {};
+  const code = e.code;
+  const description = e.description;
+  return {
+    code: typeof code === 'string' ? code : undefined,
+    description: typeof description === 'string' && description.trim() ? description.trim() : undefined,
+  };
+}
+
 /** First error description from Asaas JSON body `{ errors: [{ description }] }`. */
 export function extractAsaasFirstErrorDescription(body: unknown): string | undefined {
-  const o = body && typeof body === 'object' && !Array.isArray(body) ? (body as Record<string, unknown>) : null;
-  if (!o) return undefined;
-  const errors = o.errors;
-  if (!Array.isArray(errors) || errors.length === 0) return undefined;
-  const first = errors[0];
-  if (first && typeof first === 'object' && first !== null) {
-    const d = (first as Record<string, unknown>).description;
-    return typeof d === 'string' && d.trim() ? d.trim() : undefined;
-  }
-  return undefined;
+  return extractAsaasFirstErrorFields(body).description;
 }
 
 async function fetchWithTimeout(
@@ -60,7 +73,7 @@ async function fetchWithTimeout(
   }
 }
 
-function resolveBaseUrl(override?: string): string {
+export function effectiveAsaasApiBaseUrl(override?: string): string {
   let raw = (override ?? DEFAULT_BASE_URL).trim().replace(/\/$/, '');
   // Paths already include /v3/...; strip accidental /v3 on env (common misconfig)
   if (raw.endsWith('/v3')) {
@@ -85,7 +98,7 @@ export interface CreateAsaasPixPaymentInput {
 }
 
 export function createAsaasClient(apiKey: string, options?: { baseUrl?: string; timeoutMs?: number }) {
-  const baseUrl = resolveBaseUrl(options?.baseUrl);
+  const baseUrl = effectiveAsaasApiBaseUrl(options?.baseUrl);
   const timeoutMs = options?.timeoutMs ?? DEFAULT_TIMEOUT_MS;
 
   // Asaas exige User-Agent em contas criadas após 11/06/2024 (senão pode retornar 401)

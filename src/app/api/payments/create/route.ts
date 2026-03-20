@@ -3,7 +3,9 @@ import { getSessionFromCookies } from '@/lib/auth/session';
 import { prisma } from '@/lib/db';
 import { hasActiveOrder } from '@/lib/orders/concurrency';
 import {
+  asaasApiKeyConfigHint,
   getPaymentGateway,
+  readAsaasApiKeyRaw,
   readAsaasDefaultCustomerDocumentRaw,
   readEnv,
   sanitizeAsaasApiKey,
@@ -11,7 +13,8 @@ import {
 import {
   createAsaasClient,
   AsaasHttpError,
-  extractAsaasFirstErrorDescription,
+  effectiveAsaasApiBaseUrl,
+  extractAsaasFirstErrorFields,
 } from '@/lib/payments/asaas-client';
 import { ensureAsaasCustomerId } from '@/lib/payments/asaas-customer';
 import {
@@ -121,7 +124,46 @@ export async function POST(request: Request) {
     );
   }
 
-  const apiKey = sanitizeAsaasApiKey(readEnv('ASAAS_API_KEY'));
+  const apiKey = sanitizeAsaasApiKey(readAsaasApiKeyRaw() ?? readEnv('ASAAS_API_KEY'));
+  const keyHint = apiKey ? asaasApiKeyConfigHint(apiKey) : undefined;
+  if (keyHint) {
+    console.error('[payments/create] ASAAS_API_KEY', keyHint);
+    return paymentJson({ error: keyHint }, { status: 500 });
+  }
+
+  const baseUrl = readEnv('ASAAS_API_BASE_URL')?.trim();
+  const effectiveBase = effectiveAsaasApiBaseUrl(baseUrl || undefined);
+  if (apiKey) {
+    const isSandboxKey = apiKey.startsWith('aact_hmlg_');
+    const isProdKey = apiKey.startsWith('aact_prod_');
+    const isSandboxHost = effectiveBase.includes('sandbox');
+    if (isSandboxKey && !isSandboxHost) {
+      return paymentJson(
+        {
+          error:
+            'Chave de API de SANDBOX (aact_hmlg_*): defina ASAAS_API_BASE_URL=https://api-sandbox.asaas.com na Vercel e faça redeploy.',
+        },
+        { status: 500 }
+      );
+    }
+    if (isProdKey && isSandboxHost) {
+      return paymentJson(
+        {
+          error:
+            'Chave de API de PRODUÇÃO (aact_prod_*): na Vercel remova ASAAS_API_BASE_URL ou use https://api.asaas.com (não use host de sandbox).',
+        },
+        { status: 500 }
+      );
+    }
+    console.log('[payments/create] asaasProbe', {
+      vercelEnv: readEnv('VERCEL_ENV') ?? null,
+      keyLength: apiKey.length,
+      keyKind: isSandboxKey ? 'sandbox' : isProdKey ? 'production' : 'unknown',
+      baseUrlEnv: baseUrl || '(unset → https://api.asaas.com)',
+      effectiveHost: effectiveBase.replace(/^https:\/\//, ''),
+    });
+  }
+
   const envDocDigits = readAsaasDefaultCustomerDocumentRaw()?.replace(/\D/g, '') ?? '';
   const payerDocumentDigits = resolvePayerDocumentDigits({
     bodyCpfCnpj: cpfCnpjFromBody,
@@ -144,7 +186,6 @@ export async function POST(request: Request) {
     return paymentJson({ error: 'Configuração de pagamentos indisponível' }, { status: 500 });
   }
 
-  const baseUrl = readEnv('ASAAS_API_BASE_URL')?.trim();
   if (!apiKey) {
     return paymentJson({ error: 'Configuração de pagamentos indisponível' }, { status: 500 });
   }
@@ -222,13 +263,22 @@ export async function POST(request: Request) {
       );
     }
     if (e instanceof AsaasHttpError) {
-      const fromApi = extractAsaasFirstErrorDescription(e.body);
-      console.error('[payments/create] Asaas customer API', { status: e.statusCode, body: e.body });
+      const { code: asaasErrCode, description: fromApi } = extractAsaasFirstErrorFields(e.body);
+      console.error('[payments/create] Asaas customer API', {
+        status: e.statusCode,
+        asaasErrorCode: asaasErrCode,
+        asaasErrorDescription: fromApi,
+        bodyJson: e.body != null ? JSON.stringify(e.body) : undefined,
+      });
       if (e.statusCode === 401 || e.statusCode === 403) {
+        const envHint =
+          asaasErrCode === 'invalid_environment'
+            ? ' Ambiente: chave produção (aact_prod_*) → ASAAS_API_BASE_URL=https://api.asaas.com | sandbox (aact_hmlg_*) → https://api-sandbox.asaas.com'
+            : '';
         return paymentJson(
           {
             error: fromApi
-              ? `${fromApi} Confira ASAAS_API_KEY, ASAAS_API_BASE_URL (produção vs sandbox) e o painel Asaas (chave ativa / ambiente).`
+              ? `${fromApi}${envHint ? ` ${envHint}` : ''} Confira ASAAS_API_KEY na Vercel e se a conta Asaas está aprovada.`
               : 'A API Asaas recusou a autenticação. Verifique ASAAS_API_KEY e ASAAS_API_BASE_URL (sandbox vs produção) na Vercel.',
           },
           { status: 500 }

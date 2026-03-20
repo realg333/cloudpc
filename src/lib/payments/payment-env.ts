@@ -20,9 +20,33 @@ export function readAsaasDefaultCustomerDocumentRaw(): string | undefined {
   return t.length > 0 ? t : undefined;
 }
 
-/** Strip accidental leading $ from pasted shell-style values. */
+/**
+ * Lê a chave Asaas com `process.env.ASAAS_API_KEY` estático (Vercel/Next no servidor).
+ */
+export function readAsaasApiKeyRaw(): string | undefined {
+  const v = process.env.ASAAS_API_KEY;
+  return typeof v === 'string' ? v : undefined;
+}
+
+/** Remove $ inicial, espaços e quebras (paste multi-linha na Vercel). */
 export function sanitizeAsaasApiKey(v: string | undefined): string | undefined {
-  const t = v?.trim();
+  let t = v?.trim();
   if (!t) return undefined;
-  return t.replace(/^\$+/, '').trim() || undefined;
+  t = t.replace(/^\$+/, '');
+  t = t.replace(/\s+/g, '').trim();
+  return t || undefined;
+}
+
+/**
+ * Erro comum: colar token do webhook (whsec_) ou valor truncado.
+ * Chaves de API do Asaas começam com `aact_` (produção/sandbox).
+ */
+export function asaasApiKeyConfigHint(key: string): string | undefined {
+  if (key.startsWith('whsec_')) {
+    return 'ASAAS_API_KEY está com o token do webhook (whsec_…). No Asaas use Integrações → API Key (chave que começa com aact_), não o segredo do webhook.';
+  }
+  if (!key.startsWith('aact_')) {
+    return 'ASAAS_API_KEY deve ser a chave de API (começa com aact_). Gere em Integrações → API Key no painel Asaas e cole o valor inteiro na Vercel.';
+  }
+  return undefined;
 }

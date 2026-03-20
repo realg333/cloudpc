@@ -57,6 +57,26 @@ describe('webhook handler', () => {
     expect(prisma.paymentLog.create).not.toHaveBeenCalled();
   });
 
+  it('returns 200 for ACCESS_TOKEN_DISABLED (lifecycle, not payment)', async () => {
+    const { POST } = await import('./route');
+    const body = {
+      id: 'evt_token_disabled',
+      event: 'ACCESS_TOKEN_DISABLED',
+      dateCreated: '2026-03-20T17:51:50',
+      account: { id: 'e6b7f517-6724-424e-97f1-65f05badc883' },
+      accessToken: { id: '1b04a34b-c97d-4893-a39d-6f79d1009b5a', name: 'CLOUDPC', enabled: false },
+    };
+    const req = new Request('http://localhost/api/webhooks/payments', {
+      method: 'POST',
+      body: JSON.stringify(body),
+      headers: authHeaders,
+    });
+    const res = await POST(req);
+    expect(res.status).toBe(200);
+    await expect(res.json()).resolves.toMatchObject({ received: true });
+    expect(prisma.order.findUnique).not.toHaveBeenCalled();
+  });
+
   it('returns 200 idempotent for duplicate eventId', async () => {
     const { POST } = await import('./route');
     const payload = asaasPaymentWebhook({
