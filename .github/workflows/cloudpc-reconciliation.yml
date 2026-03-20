@@ -1,32 +1,29 @@
-# Cron "quente": teardown + fila de provisionamento (sem reconciliação pesada).
-# Reconciliação completa: workflow cloudpc-reconciliation.yml (a cada 30 min).
-#
-# Secrets: APP_URL, CRON_SECRET (iguais à Vercel Production).
+# Reconciliação completa (inclui listInstances na Vultr) — menos frequente que o cron quente.
+# Reduz chamadas pesadas à API Vultr sem atrasar teardown/provisionamento.
 
-name: CloudPC cron (hot path)
+name: CloudPC reconciliation
 
 on:
   schedule:
-    # A cada 5 min (UTC): destrói VMs expiradas cedo (menos horas faturadas na Vultr) e processa fila.
-    - cron: "*/5 * * * *"
+    - cron: "*/30 * * * *"
   workflow_dispatch:
 
 jobs:
-  call-vercel-cron:
+  reconcile:
     runs-on: ubuntu-latest
     timeout-minutes: 10
     steps:
-      - name: GET /api/cron?reconcile=0
+      - name: GET /api/cron/reconciliation
         env:
           APP_URL: ${{ secrets.APP_URL }}
           CRON_SECRET: ${{ secrets.CRON_SECRET }}
         run: |
           set -euo pipefail
           if [ -z "${APP_URL:-}" ] || [ -z "${CRON_SECRET:-}" ]; then
-            echo "::error::Defina os secrets APP_URL e CRON_SECRET no repositório (Settings → Secrets → Actions)."
+            echo "::error::Defina APP_URL e CRON_SECRET (Actions secrets)."
             exit 1
           fi
-          URL="${APP_URL%/}/api/cron?reconcile=0"
+          URL="${APP_URL%/}/api/cron/reconciliation"
           echo "Calling $URL"
           HTTP_CODE=$(curl -sS -o body.json -w "%{http_code}" \
             -H "Authorization: Bearer ${CRON_SECRET}" \

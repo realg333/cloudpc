@@ -5,25 +5,32 @@ import { runReconciliation } from '@/lib/provisioning/reconciliation';
 import { processExpiredVms } from '@/lib/provisioning/teardown';
 
 /**
- * Single daily cron entry (Vercel Hobby: crons must run at most once per day).
- * Chains teardown → provisioning → reconciliation. Sub-routes under /api/cron/*
- * remain for manual calls or Pro-tier schedules.
+ * Chains teardown → provisioning → optionally reconciliation.
+ *
+ * Query: `reconcile=0` skips full DB↔Vultr reconciliation (avoids listInstances every run).
+ * Use frequent runs with reconcile=0 for cost control; call /api/cron/reconciliation on a slower schedule.
  */
 export async function GET(request: Request) {
   if (!isCronAuthorized(request)) {
     return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
   }
 
+  const url = new URL(request.url);
+  const reconcileParam = url.searchParams.get('reconcile');
+  const runFullReconcile =
+    reconcileParam !== '0' && reconcileParam?.toLowerCase() !== 'false';
+
   try {
     const destroyed = await processExpiredVms();
     const processed = await processProvisioningJobs();
-    const reconciliation = await runReconciliation();
+    const reconciliation = runFullReconcile ? await runReconciliation() : null;
 
     return NextResponse.json({
       ok: true,
       destroyed,
       processed,
       reconciliation,
+      reconcileSkipped: !runFullReconcile,
     });
   } catch (err) {
     console.error('[api/cron]', err);
