@@ -51,7 +51,18 @@ export async function POST(request: Request) {
 
   const order = await prisma.order.findUnique({
     where: { id: orderId },
-    include: { plan: true, user: true },
+    select: {
+      id: true,
+      userId: true,
+      status: true,
+      amountCents: true,
+      currency: true,
+      machineProfileId: true,
+      gatewayChargeId: true,
+      gatewayChargeCreatedAt: true,
+      plan: true,
+      user: true,
+    },
   });
 
   if (!order) {
