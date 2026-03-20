@@ -1,6 +1,6 @@
 import type { PrismaClient } from '@prisma/client';
 import type { AsaasClient } from './asaas-client';
-import { readEnv } from './payment-env';
+import { readAsaasDefaultCustomerDocumentRaw } from './payment-env';
 
 function asRecord(v: unknown): Record<string, unknown> | null {
   if (v && typeof v === 'object' && !Array.isArray(v)) return v as Record<string, unknown>;
@@ -52,7 +52,7 @@ export async function ensureAsaasCustomerId(
     return fromList;
   }
 
-  const doc = readEnv('ASAAS_DEFAULT_CUSTOMER_DOCUMENT')?.replace(/\D/g, '') ?? '';
+  const doc = readAsaasDefaultCustomerDocumentRaw()?.replace(/\D/g, '') ?? '';
   if (!doc || doc.length < 11) {
     throw new Error(
       'ASAAS_DEFAULT_CUSTOMER_DOCUMENT is required (CPF/CNPJ digits) to create Asaas customers'

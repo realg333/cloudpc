@@ -21,4 +21,4 @@ export function getPaymentGateway(): PaymentGateway {
 
 export type { PaymentGateway, ParsedWebhookNotification, WebhookVerifyContext } from './gateway';
 export { createAsaasGateway } from './asaas-gateway';
-export { readEnv, sanitizeAsaasApiKey } from './payment-env';
+export { readAsaasDefaultCustomerDocumentRaw, readEnv, sanitizeAsaasApiKey } from './payment-env';

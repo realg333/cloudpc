@@ -26,6 +26,12 @@ Assim o build usa o Next.js correto. Se a raiz do Git for **só** a pasta do app
 
 Sem essas chaves, a API de pagamento não gera PIX real.
 
+**Ambiente na Vercel:** cada variável pode estar ligada só a **Production** ou só a **Preview**. Se o site aberto for um deploy de preview (URL `*.vercel.app` de branch) e a variável existir só em Production, o servidor não verá o valor — replique para o ambiente certo e faça **Redeploy**.
+
+**Documento:** use um CPF ou CNPJ **válido** aceito pelo Asaas. Valores de exemplo (ex.: `12345678909`) costumam falhar na API mesmo com 11 dígitos.
+
+**Confirmar que o deploy é o certo:** no navegador, abra DevTools → aba **Rede** → clique na requisição `POST /api/payments/create` → em **Cabeçalhos da resposta** deve existir `X-CloudPC-Payments-API: 2025-03-20`. Se esse cabeçalho **não** aparecer, o domínio ainda está servindo um build antigo (outro projeto Vercel, branch, pasta raiz errada ou cache). Faça redeploy do commit atual após **git push**.
+
 ## Sobre respostas “mock” no browser
 
 O código atual **não** inclui gateway mock. Se ainda aparecer `mock_…` ou `mock-qr-code`, é **build antigo em cache**, **deploy de outra branch**, ou **Root Directory** apontando para a pasta errada.

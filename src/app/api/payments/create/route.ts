@@ -2,8 +2,17 @@ import { NextResponse } from 'next/server';
 import { getSessionFromCookies } from '@/lib/auth/session';
 import { prisma } from '@/lib/db';
 import { hasActiveOrder } from '@/lib/orders/concurrency';
-import { getPaymentGateway, readEnv, sanitizeAsaasApiKey } from '@/lib/payments';
-import { createAsaasClient, AsaasHttpError } from '@/lib/payments/asaas-client';
+import {
+  getPaymentGateway,
+  readAsaasDefaultCustomerDocumentRaw,
+  readEnv,
+  sanitizeAsaasApiKey,
+} from '@/lib/payments';
+import {
+  createAsaasClient,
+  AsaasHttpError,
+  extractAsaasFirstErrorDescription,
+} from '@/lib/payments/asaas-client';
 import { ensureAsaasCustomerId } from '@/lib/payments/asaas-customer';
 import {
   extractPaymentId,
@@ -14,36 +23,48 @@ import { assertRealPixPaymentPayload } from '@/lib/payments/payment-invariants';
 
 const PROVIDER = 'asaas' as const;
 
+/** Bumps when payment API responses change — check Response headers on /api/payments/create */
+const PAYMENTS_API_REVISION = '2025-03-20';
+
+export const runtime = 'nodejs';
+export const dynamic = 'force-dynamic';
+
+function paymentJson(data: unknown, init?: ResponseInit) {
+  const r = NextResponse.json(data, init);
+  r.headers.set('X-CloudPC-Payments-API', PAYMENTS_API_REVISION);
+  return r;
+}
+
 export async function POST(request: Request) {
   const session = await getSessionFromCookies();
   if (!session) {
-    return NextResponse.json({ error: 'Não autenticado' }, { status: 401 });
+    return paymentJson({ error: 'Não autenticado' }, { status: 401 });
   }
 
   let body: { orderId?: string; method?: string };
   try {
     body = await request.json();
   } catch {
-    return NextResponse.json({ error: 'Corpo da requisição inválido' }, { status: 400 });
+    return paymentJson({ error: 'Corpo da requisição inválido' }, { status: 400 });
   }
 
   const { orderId, method } = body;
   if (!orderId || !method) {
-    return NextResponse.json(
+    return paymentJson(
       { error: 'orderId e method são obrigatórios' },
       { status: 400 }
     );
   }
 
   if (method !== 'pix' && method !== 'crypto') {
-    return NextResponse.json(
+    return paymentJson(
       { error: 'method deve ser "pix" ou "crypto"' },
       { status: 400 }
     );
   }
 
   if (method === 'crypto') {
-    return NextResponse.json(
+    return paymentJson(
       { error: 'Pagamento em cripto não está disponível no momento. Use PIX.' },
       { status: 400 }
     );
@@ -66,15 +87,15 @@ export async function POST(request: Request) {
   });
 
   if (!order) {
-    return NextResponse.json({ error: 'Pedido não encontrado' }, { status: 404 });
+    return paymentJson({ error: 'Pedido não encontrado' }, { status: 404 });
   }
 
   if (order.userId !== session.user.id) {
-    return NextResponse.json({ error: 'Acesso negado' }, { status: 403 });
+    return paymentJson({ error: 'Acesso negado' }, { status: 403 });
   }
 
   if (order.status !== 'pending_payment') {
-    return NextResponse.json(
+    return paymentJson(
       { error: 'Pedido não está aguardando pagamento' },
       { status: 400 }
     );
@@ -82,7 +103,7 @@ export async function POST(request: Request) {
 
   const hasActive = await hasActiveOrder(session.user.id);
   if (hasActive) {
-    return NextResponse.json(
+    return paymentJson(
       { error: 'Você já possui uma máquina ativa. Aguarde o término para contratar outra.' },
       { status: 409 }
     );
@@ -90,17 +111,19 @@ export async function POST(request: Request) {
 
   const amountCents = order.amountCents ?? order.plan.priceCents;
   if (amountCents == null || amountCents <= 0) {
-    return NextResponse.json(
+    return paymentJson(
       { error: 'Valor do pedido não disponível' },
       { status: 400 }
     );
   }
 
   const apiKey = sanitizeAsaasApiKey(readEnv('ASAAS_API_KEY'));
+  const docDigits = readAsaasDefaultCustomerDocumentRaw()?.replace(/\D/g, '') ?? '';
   console.log('[payments/create] provider', {
     provider: PROVIDER,
     asaasApiKeySet: Boolean(apiKey),
     asaasWebhookTokenSet: Boolean(readEnv('ASAAS_WEBHOOK_TOKEN')?.trim()),
+    asaasDefaultDocReady: docDigits.length >= 11,
     vercelDeployment: readEnv('VERCEL_DEPLOYMENT_ID') ?? null,
   });
 
@@ -109,12 +132,12 @@ export async function POST(request: Request) {
     gateway = getPaymentGateway();
   } catch (e) {
     console.error('[payments/create] gateway', e);
-    return NextResponse.json({ error: 'Configuração de pagamentos indisponível' }, { status: 500 });
+    return paymentJson({ error: 'Configuração de pagamentos indisponível' }, { status: 500 });
   }
 
   const baseUrl = readEnv('ASAAS_API_BASE_URL')?.trim();
   if (!apiKey) {
-    return NextResponse.json({ error: 'Configuração de pagamentos indisponível' }, { status: 500 });
+    return paymentJson({ error: 'Configuração de pagamentos indisponível' }, { status: 500 });
   }
 
   if (method === 'pix' && order.gatewayChargeId) {
@@ -123,7 +146,7 @@ export async function POST(request: Request) {
       const snap = await client.getPayment(order.gatewayChargeId);
       const st = (extractPaymentStatus(snap) ?? '').toUpperCase();
       if (st === 'RECEIVED' || st === 'CONFIRMED') {
-        return NextResponse.json(
+        return paymentJson(
           { error: 'Pagamento já confirmado. Atualize a página de pedidos.' },
           { status: 400 }
         );
@@ -143,12 +166,12 @@ export async function POST(request: Request) {
             assertRealPixPaymentPayload(payload);
           } catch (inv) {
             console.error('[payments/create] invariant (reuse charge)', inv);
-            return NextResponse.json(
+            return paymentJson(
               { error: 'Resposta de pagamento inválida. Confira o deploy e variáveis ASAAS na Vercel.' },
               { status: 500 }
             );
           }
-          const r = NextResponse.json(payload, { status: 201 });
+          const r = paymentJson(payload, { status: 201 });
           r.headers.set('X-CloudPC-Payment-Provider', PROVIDER);
           return r;
         }
@@ -174,8 +197,41 @@ export async function POST(request: Request) {
     });
   } catch (e) {
     console.error('[payments/create] Asaas customer', e);
-    return NextResponse.json(
-      { error: 'Não foi possível preparar o cadastro de pagamento. Verifique ASAAS_DEFAULT_CUSTOMER_DOCUMENT.' },
+    if (e instanceof Error && e.message.includes('ASAAS_DEFAULT_CUSTOMER_DOCUMENT is required')) {
+      return paymentJson(
+        {
+          error:
+            'Defina ASAAS_DEFAULT_CUSTOMER_DOCUMENT (CPF ou CNPJ, só dígitos) nas variáveis de ambiente do projeto na Vercel para o ambiente em uso (Produção e/ou Preview), salve e faça um redeploy.',
+        },
+        { status: 500 }
+      );
+    }
+    if (e instanceof AsaasHttpError) {
+      const fromApi = extractAsaasFirstErrorDescription(e.body);
+      console.error('[payments/create] Asaas customer API', { status: e.statusCode, body: e.body });
+      if (e.statusCode === 401 || e.statusCode === 403) {
+        return paymentJson(
+          {
+            error:
+              'A API Asaas recusou a autenticação. Verifique ASAAS_API_KEY e ASAAS_API_BASE_URL (sandbox vs produção) na Vercel.',
+          },
+          { status: 500 }
+        );
+      }
+      return paymentJson(
+        {
+          error:
+            fromApi ??
+            'O Asaas rejeitou o cadastro do cliente. Confira se o CPF/CNPJ em ASAAS_DEFAULT_CUSTOMER_DOCUMENT é válido, se a chave API corresponde ao ambiente (sandbox vs produção) e os logs do deploy.',
+        },
+        { status: e.statusCode === 400 ? 400 : 502 }
+      );
+    }
+    return paymentJson(
+      {
+        error:
+          'Não foi possível preparar o cadastro de pagamento. Tente de novo em instantes ou contate o suporte.',
+      },
       { status: 500 }
     );
   }
@@ -200,7 +256,7 @@ export async function POST(request: Request) {
     });
   } catch (inv) {
     console.error('[payments/create] invariant (new charge)', inv);
-    return NextResponse.json(
+    return paymentJson(
       { error: 'Resposta de pagamento inválida. Confira o deploy e variáveis ASAAS na Vercel.' },
       { status: 500 }
     );
@@ -224,7 +280,7 @@ export async function POST(request: Request) {
     redirectUrl: result.redirectUrl,
   };
 
-  const res = NextResponse.json(payload, { status: 201 });
+  const res = paymentJson(payload, { status: 201 });
   res.headers.set('X-CloudPC-Payment-Provider', PROVIDER);
   return res;
 }

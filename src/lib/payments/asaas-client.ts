@@ -27,6 +27,20 @@ export class AsaasNetworkError extends Error {
   }
 }
 
+/** First error description from Asaas JSON body `{ errors: [{ description }] }`. */
+export function extractAsaasFirstErrorDescription(body: unknown): string | undefined {
+  const o = body && typeof body === 'object' && !Array.isArray(body) ? (body as Record<string, unknown>) : null;
+  if (!o) return undefined;
+  const errors = o.errors;
+  if (!Array.isArray(errors) || errors.length === 0) return undefined;
+  const first = errors[0];
+  if (first && typeof first === 'object' && first !== null) {
+    const d = (first as Record<string, unknown>).description;
+    return typeof d === 'string' && d.trim() ? d.trim() : undefined;
+  }
+  return undefined;
+}
+
 async function fetchWithTimeout(
   url: string,
   init: RequestInit,
