@@ -13,14 +13,14 @@ export default function NavBarContent({ isLoggedIn, isAdmin }: NavBarContentProp
   const isLanding = pathname === '/';
 
   const navClasses = isLanding
-    ? 'border-white/10 bg-[#050506]/80 backdrop-blur-md'
-    : 'border-gray-200 bg-white';
+    ? 'border-white/10 bg-[#050506]/70 backdrop-blur-md'
+    : 'border-slate-200/70 bg-white/92 backdrop-blur-md';
 
   const linkBase = isLanding
     ? 'text-slate-300 hover:text-white'
-    : 'text-gray-600 hover:text-gray-900';
+    : 'text-slate-600 hover:text-slate-900';
 
-  const brandClasses = isLanding ? 'text-white' : 'text-gray-900';
+  const brandClasses = isLanding ? 'text-white' : 'text-slate-900';
 
   const ctaClasses = isLanding
     ? 'rounded-xl bg-gradient-to-r from-indigo-500 to-violet-600 px-4 py-2 font-semibold text-white hover:from-indigo-400 hover:to-violet-500'
@@ -32,11 +32,11 @@ export default function NavBarContent({ isLoggedIn, isAdmin }: NavBarContentProp
 
   return (
     <nav
-      className={`flex items-center gap-6 border-b px-6 py-4 transition-colors ${navClasses}`}
+      className={`sticky top-0 z-50 flex items-center gap-6 border-b px-6 py-4 transition-colors ${navClasses}`}
       role="navigation"
       aria-label="Navegação principal"
     >
-      <Link href="/" className={`font-semibold ${brandClasses}`}>
+      <Link href="/" className={`font-semibold tracking-tight ${brandClasses}`}>
         Cloud Gaming VPS Brazil
       </Link>
       <div className="flex flex-1 gap-4">

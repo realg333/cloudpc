@@ -25,13 +25,13 @@ See: `.planning/PROJECT.md` (updated 2026-03-17)
 
 **Core value:** Users can quickly and reliably get a high‑performance Windows cloud PC with GPU, paid upfront in a fixed‑time package, and connect through a simple web dashboard with minimal friction and manual intervention.
 
-**Current focus:** v1.2 — Phase 8.1.1 código entregue (aguardando verificação produção); checkpoint infra: cron via GitHub Actions
+**Current focus:** v1.2 — Phase 13 Home + visual global em execução (redesign tecnológico + motion autoral)
 
 ## Current Position
 
 **Current Phase:** 8.1.1
 **Current Phase Name:** Session persistence and email delivery fix
-**Total Phases:** 12
+**Total Phases:** 13
 **Current Plan:** CHECKPOINT 2026-03-20 — cron GitHub Actions + eficiência
 **Total Plans in Phase:** 2
 **Status:** Checkpoint + UAT pendente (8.1.1)
@@ -46,6 +46,8 @@ See: `.planning/PROJECT.md` (updated 2026-03-17)
 ## Accumulated Context
 
 ### Roadmap Evolution
+
+- **2026-03-24 — Phase 13 added:** Home + visual global. Objetivo: redesign completo da Home com direção preto/roxo, motion autoral inspirado em referências e consistência visual entre páginas.
 
 - **2026-03-24 — Phase 12 added:** Frontend — checkout, pagamento PIX e UX. Próximo foco explícito: **alterações no front**; gateway Asaas validado em local; produção/hospedagem (ex.: Vercel) com limitações conhecidas até migração futura.
 

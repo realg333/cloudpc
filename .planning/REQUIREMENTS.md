@@ -62,6 +62,13 @@ Requirements for milestone v1.2. Focus: production-ready real infrastructure and
 - [x] **FE-04**: Motion is purposeful (status/loading/confirmation/error), subtle, and respects reduced-motion preferences
 - [x] **FE-05**: PIX/QR states and production limitation feedback are explicit, user-friendly, and actionable
 
+### Home & Visual System (Phase 13)
+
+- [x] **FE-06**: Home keeps existing structure and project text while receiving full high-tech visual redesign
+- [x] **FE-07**: New home motion is original (inspired by references, not copied), purposeful, and non-blocking
+- [x] **FE-08**: Home motion and visual effects fully respect reduced-motion accessibility preferences
+- [x] **FE-09**: Global visual consistency improves across navigation and shared surfaces
+
 ## Future Requirements
 
 Deferred to future releases.
@@ -72,7 +79,7 @@ Deferred to future releases.
 
 | Feature | Reason |
 |---------|--------|
-| Major frontend redesign | UI already polished in v1.1 |
+| Full rebrand with IA rewrite | Preserve current product structure and messaging while upgrading visual direction |
 | New user-facing features | Focus on reliability and real operation |
 | Advanced analytics | Deferred until core flow validated |
 
@@ -113,10 +120,14 @@ Deferred to future releases.
 | FE-03 | Phase 12 | Complete |
 | FE-04 | Phase 12 | Complete |
 | FE-05 | Phase 12 | Complete |
+| FE-06 | Phase 13 | Complete |
+| FE-07 | Phase 13 | Complete |
+| FE-08 | Phase 13 | Complete |
+| FE-09 | Phase 13 | Complete |
 
 **Coverage:**
-- v1.2 requirements: 29 total
-- Mapped to phases: 29
+- v1.2 requirements: 33 total
+- Mapped to phases: 33
 - Unmapped: 0 ✓
 
 ---

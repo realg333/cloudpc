@@ -4,7 +4,7 @@
 
 - ✅ **v1.0 MVP** — Phases 1–5 (shipped 2026-03-17)
 - ✅ **v1.1 Frontend Polish** — Phases 6–7 (shipped 2026-03-17)
-- 🚧 **v1.2 Real Infra & Payments Integration** — Phases 8–12 (in progress)
+- 🚧 **v1.2 Real Infra & Payments Integration** — Phases 8–13 (in progress)
 
 ## Phases
 
@@ -31,11 +31,11 @@ Full details: [milestones/v1.1-ROADMAP.md](milestones/v1.1-ROADMAP.md)
 
 </details>
 
-## v1.2 Real Infra & Payments Integration (Phases 8–12)
+## v1.2 Real Infra & Payments Integration (Phases 8–13)
 
 **Milestone Goal:** Turn the current system into a fully working, revenue-generating product with real payments, real VM provisioning, and end-to-end validated flow.
 
-**Phase Numbering:** Phases 8–12 (continuing from v1.1)
+**Phase Numbering:** Phases 8–13 (continuing from v1.1)
 
 - [x] **Phase 8: Environment & Cost Foundation** — .env, CRON, webhooks reachable, 1 VM per user guardrails (2 plans) (completed 2026-03-17)
 - [x] **Phase 8.1: Session persistence fix** — getBaseUrl em redirects, SESSION_SECRET, sessão persistente (completed 2026-03-18)
@@ -44,6 +44,7 @@ Full details: [milestones/v1.1-ROADMAP.md](milestones/v1.1-ROADMAP.md)
 - [ ] **Phase 10: Real Vultr Integration** — Production API, MachineProfiles, Parsec-ready instances
 - [ ] **Phase 11: End-to-End & Teardown** — Full flow validated, failure handling, orphan prevention, observability
 - [x] **Phase 12: Frontend — checkout, PIX e UX** — UI/fluxo de pagamento; gateway validado em local; limitações de hospedagem (ex.: Vercel) tratadas até migração (completed 2026-03-24)
+- [ ] **Phase 13: Home + visual global** — redesign tecnológico preto/roxo com motion autoral na Home e consistência visual global
 
 ## Phase Details
 
@@ -144,14 +145,30 @@ Context: [SESSION_SCAN_REPORT.md](../SESSION_SCAN_REPORT.md)
 **Plans:** 3/3 plans complete
 
 Plans:
-- [ ] 12-01-PLAN.md — Design tokens, motion utilitário e contrato de status/mensagens para pagamentos
-- [ ] 12-02-PLAN.md — Redesign da página de pagamento e PaymentForm com PIX/QR + feedback de limitação em produção
-- [ ] 12-03-PLAN.md — Redesign responsivo de Meus pedidos + teste automatizado do contrato de status/copy
+- [x] 12-01-PLAN.md — Design tokens, motion utilitário e contrato de status/mensagens para pagamentos
+- [x] 12-02-PLAN.md — Redesign da página de pagamento e PaymentForm com PIX/QR + feedback de limitação em produção
+- [x] 12-03-PLAN.md — Redesign responsivo de Meus pedidos + teste automatizado do contrato de status/copy
+
+### Phase 13: Home + visual global
+
+**Goal:** Aplicar redesign tecnológico completo na Home (preto/roxo, motion autoral inspirado nas referências, mantendo os textos e a estrutura de seções já existentes) e elevar a consistência visual global do site.
+
+**Depends on:** Phase 12
+**Requirements**: FE-06, FE-07, FE-08, FE-09
+**Success Criteria** (what must be TRUE):
+  1. Home mantém os textos atuais, mas ganha nova direção visual high-tech preto/roxo em todos os blocos
+  2. Motion autoral (ticker, ambient layers, hero rail) é funcional e respeita `prefers-reduced-motion`
+  3. Navegação e superfícies principais ficam visualmente mais consistentes com a nova direção de design
+  4. Home em produção reflete claramente as alterações (sem depender apenas de páginas de pedidos/pagamento)
+**Plans:** 1/1 plan complete
+
+Plans:
+- [x] 13-01-PLAN.md — Home redesign completo com motion autoral + ajustes de consistência visual global
 
 ## Progress
 
 **Execution Order:**
-Phase 8.1 runs after Phase 8 (urgent session fix). Phases 8.1–9 and 8.1–10 can run in parallel; Phase 11 requires both 9 and 10. **Phase 12** foca no front e pode avançar em paralelo a 10/11 após dependências mínimas da API de pagamento (Fase 9).
+Phase 8.1 runs after Phase 8 (urgent session fix). Phases 8.1–9 and 8.1–10 can run in parallel; Phase 11 requires both 9 and 10. **Phase 12** cobriu checkout/pagamentos; **Phase 13** estende o redesign para a Home e consistência visual global.
 
 | Phase | Milestone | Plans Complete | Status | Completed |
 |-------|-----------|----------------|--------|-----------|
@@ -161,4 +178,5 @@ Phase 8.1 runs after Phase 8 (urgent session fix). Phases 8.1–9 and 8.1–10 c
 | 9. Real Payment Gateway | v1.2 | 0/0 | Not started | - |
 | 10. Real Vultr Integration | v1.2 | 0/0 | Not started | - |
 | 11. End-to-End & Teardown | v1.2 | 0/0 | Not started | - |
-| **12. Frontend — checkout, PIX e UX** | v1.2 | 0/0 | Not planned | - |
+| **12. Frontend — checkout, PIX e UX** | v1.2 | 3/3 | Complete | 2026-03-24 |
+| **13. Home + visual global** | v1.2 | 1/1 | In progress | - |
