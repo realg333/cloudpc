@@ -6,15 +6,15 @@ current_phase: 8.1.1
 current_phase_name: Session persistence and email delivery fix
 current_plan: CHECKPOINT 2026-03-20 — cron GitHub Actions + eficiência
 status: Checkpoint + UAT pendente (8.1.1)
-stopped_at: Completed 12-02-PLAN.md
-last_updated: "2026-03-24T19:35:48.383Z"
+stopped_at: Completed 12-03-PLAN.md
+last_updated: "2026-03-24T19:46:38.408Z"
 last_activity: 2026-03-20
 progress:
   total_phases: 7
-  completed_phases: 2
+  completed_phases: 3
   total_plans: 8
-  completed_plans: 5
-  percent: 63
+  completed_plans: 6
+  percent: 75
 ---
 
 [# Project State: Cloud Gaming VPS Brazil]
@@ -37,7 +37,7 @@ See: `.planning/PROJECT.md` (updated 2026-03-17)
 **Status:** Checkpoint + UAT pendente (8.1.1)
 **Last Activity:** 2026-03-20
 **Last Activity Description:** Infra: CRON_SECRET, GitHub Actions (hot path + reconciliation), `reconcile=0`, `vercel.json` sem crons
-**Progress:** [██████░░░░] 63%
+**Progress:** [████████░░] 75%
 
 **Shipped:**
 - v1.0 MVP — 5 phases, 15 plans (2026-03-17)
@@ -69,6 +69,9 @@ See: `.planning/PROJECT.md` (updated 2026-03-17)
 - [Phase 12]: Preserve existing headings and navigation labels while moving pay page to dark checkout shell.
 - [Phase 12]: Keep crypto visible but unavailable with explicit in-phase messaging.
 - [Phase 12]: Map transient payment failures to typed limitation banners with retry CTA.
+- [Phase 12]: Usar PaymentStatusBadge em todas as visualizacoes de status de pedidos para consistencia visual.
+- [Phase 12]: Manter CTA Pagar sempre visivel para pending_payment em mobile e desktop.
+- [Phase 12]: Centralizar badgeClassName e ctaText dentro de PAYMENT_STATUS_UI para proteger contrato por teste.
 
 ## Blockers
 
@@ -76,6 +79,6 @@ See: `.planning/PROJECT.md` (updated 2026-03-17)
 
 ## Session
 
-**Last Date:** 2026-03-24T19:35:48.379Z
-**Stopped At:** Completed 12-02-PLAN.md
+**Last Date:** 2026-03-24T19:46:38.404Z
+**Stopped At:** Completed 12-03-PLAN.md
 **Resume File:** None

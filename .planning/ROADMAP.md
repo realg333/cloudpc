@@ -43,7 +43,7 @@ Full details: [milestones/v1.1-ROADMAP.md](milestones/v1.1-ROADMAP.md)
 - [ ] **Phase 9: Real Payment Gateway** — PIX + crypto, webhook validation, idempotent handling
 - [ ] **Phase 10: Real Vultr Integration** — Production API, MachineProfiles, Parsec-ready instances
 - [ ] **Phase 11: End-to-End & Teardown** — Full flow validated, failure handling, orphan prevention, observability
-- [ ] **Phase 12: Frontend — checkout, PIX e UX** — UI/fluxo de pagamento; gateway validado em local; limitações de hospedagem (ex.: Vercel) tratadas até migração
+- [x] **Phase 12: Frontend — checkout, PIX e UX** — UI/fluxo de pagamento; gateway validado em local; limitações de hospedagem (ex.: Vercel) tratadas até migração (completed 2026-03-24)
 
 ## Phase Details
 
@@ -141,7 +141,7 @@ Context: [SESSION_SCAN_REPORT.md](../SESSION_SCAN_REPORT.md)
   2. QR/PIX e instruções exibidos de forma confiável quando a API retornar dados válidos
   3. Comportamento em produção documentado quando a plataforma de hospedagem limitar timeouts, cold start ou edge cases (mensagens ao usuário, retries visíveis onde fizer sentido)
 
-**Plans:** 2/3 plans executed
+**Plans:** 3/3 plans complete
 
 Plans:
 - [ ] 12-01-PLAN.md — Design tokens, motion utilitário e contrato de status/mensagens para pagamentos
