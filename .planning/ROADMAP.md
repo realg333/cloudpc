@@ -141,7 +141,7 @@ Context: [SESSION_SCAN_REPORT.md](../SESSION_SCAN_REPORT.md)
   2. QR/PIX e instruções exibidos de forma confiável quando a API retornar dados válidos
   3. Comportamento em produção documentado quando a plataforma de hospedagem limitar timeouts, cold start ou edge cases (mensagens ao usuário, retries visíveis onde fizer sentido)
 
-**Plans:** 1/3 plans executed
+**Plans:** 2/3 plans executed
 
 Plans:
 - [ ] 12-01-PLAN.md — Design tokens, motion utilitário e contrato de status/mensagens para pagamentos

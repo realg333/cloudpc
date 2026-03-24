@@ -58,9 +58,9 @@ Requirements for milestone v1.2. Focus: production-ready real infrastructure and
 
 - [x] **FE-01**: Existing site structure and header names remain unchanged while applying visual redesign
 - [x] **FE-02**: Payment and checkout UI adopts a high-tech black/purple visual language with consistent tokens
-- [ ] **FE-03**: Checkout and payment pages are fully responsive across mobile, tablet, desktop, and full HD screens
+- [x] **FE-03**: Checkout and payment pages are fully responsive across mobile, tablet, desktop, and full HD screens
 - [x] **FE-04**: Motion is purposeful (status/loading/confirmation/error), subtle, and respects reduced-motion preferences
-- [ ] **FE-05**: PIX/QR states and production limitation feedback are explicit, user-friendly, and actionable
+- [x] **FE-05**: PIX/QR states and production limitation feedback are explicit, user-friendly, and actionable
 
 ## Future Requirements
 
@@ -110,9 +110,9 @@ Deferred to future releases.
 | OBS-05 | Phase 11 | Pending |
 | FE-01 | Phase 12 | Complete |
 | FE-02 | Phase 12 | Complete |
-| FE-03 | Phase 12 | Pending |
+| FE-03 | Phase 12 | Complete |
 | FE-04 | Phase 12 | Complete |
-| FE-05 | Phase 12 | Pending |
+| FE-05 | Phase 12 | Complete |
 
 **Coverage:**
 - v1.2 requirements: 29 total

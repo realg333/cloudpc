@@ -6,15 +6,15 @@ current_phase: 8.1.1
 current_phase_name: Session persistence and email delivery fix
 current_plan: CHECKPOINT 2026-03-20 — cron GitHub Actions + eficiência
 status: Checkpoint + UAT pendente (8.1.1)
-stopped_at: Completed 12-01-PLAN.md
-last_updated: "2026-03-24T17:24:55.431Z"
+stopped_at: Completed 12-02-PLAN.md
+last_updated: "2026-03-24T19:35:48.383Z"
 last_activity: 2026-03-20
 progress:
   total_phases: 7
   completed_phases: 2
   total_plans: 8
-  completed_plans: 4
-  percent: 50
+  completed_plans: 5
+  percent: 63
 ---
 
 [# Project State: Cloud Gaming VPS Brazil]
@@ -37,7 +37,7 @@ See: `.planning/PROJECT.md` (updated 2026-03-17)
 **Status:** Checkpoint + UAT pendente (8.1.1)
 **Last Activity:** 2026-03-20
 **Last Activity Description:** Infra: CRON_SECRET, GitHub Actions (hot path + reconciliation), `reconcile=0`, `vercel.json` sem crons
-**Progress:** [█████░░░░░] 50%
+**Progress:** [██████░░░░] 63%
 
 **Shipped:**
 - v1.0 MVP — 5 phases, 15 plans (2026-03-17)
@@ -66,6 +66,9 @@ See: `.planning/PROJECT.md` (updated 2026-03-17)
 - [Phase 12]: Centralizado contrato tipado PAYMENT_STATUS_UI + PRODUCTION_LIMITATION_MESSAGES para copy/status de pagamentos
 - [Phase 12]: Padronizado estilo checkout preto/roxo com classes globais dedicadas e status-pill-*
 - [Phase 12]: Motion ambiental decorativo desligado em prefers-reduced-motion via JS + fallback CSS
+- [Phase 12]: Preserve existing headings and navigation labels while moving pay page to dark checkout shell.
+- [Phase 12]: Keep crypto visible but unavailable with explicit in-phase messaging.
+- [Phase 12]: Map transient payment failures to typed limitation banners with retry CTA.
 
 ## Blockers
 
@@ -73,6 +76,6 @@ See: `.planning/PROJECT.md` (updated 2026-03-17)
 
 ## Session
 
-**Last Date:** 2026-03-24T17:24:55.428Z
-**Stopped At:** Completed 12-01-PLAN.md
+**Last Date:** 2026-03-24T19:35:48.379Z
+**Stopped At:** Completed 12-02-PLAN.md
 **Resume File:** None
