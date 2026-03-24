@@ -22,7 +22,7 @@ export default function PaymentStatusBadge({
 
   return (
     <span
-      className={joinClassNames('status-pill-base', `status-pill-${status}`, sizeClass, className)}
+      className={joinClassNames('status-pill-base', config.badgeClassName, sizeClass, className)}
       title={config.hint}
     >
       <span

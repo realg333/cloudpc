@@ -13,6 +13,8 @@ export interface FrontendPaymentStatusUi {
   label: string;
   hint: string;
   tone: PaymentStatusTone;
+  badgeClassName: string;
+  ctaText?: string;
 }
 
 export const PAYMENT_STATUS_UI: Record<FrontendPaymentStatus, FrontendPaymentStatusUi> = {
@@ -20,36 +22,46 @@ export const PAYMENT_STATUS_UI: Record<FrontendPaymentStatus, FrontendPaymentSta
     label: 'Aguardando pagamento',
     hint: 'Finalize o pagamento para iniciar o provisionamento.',
     tone: 'pending',
+    badgeClassName: 'status-pill-pending_payment',
+    ctaText: 'Pagar',
   },
   paid: {
     label: 'Pagamento confirmado',
     hint: 'Recebemos o pagamento e vamos iniciar sua máquina.',
     tone: 'success',
+    badgeClassName: 'status-pill-paid',
   },
   provisioning: {
     label: 'Provisionando',
     hint: 'Sua máquina está sendo preparada agora.',
     tone: 'info',
+    badgeClassName: 'status-pill-provisioning',
+    ctaText: 'Atualizar status',
   },
   active: {
     label: 'Ativo',
     hint: 'Sua máquina está pronta para uso.',
     tone: 'success',
+    badgeClassName: 'status-pill-active',
   },
   expired: {
     label: 'Expirado',
     hint: 'O período da máquina terminou.',
     tone: 'inactive',
+    badgeClassName: 'status-pill-expired',
   },
   cancelled: {
     label: 'Cancelado',
     hint: 'O pedido foi cancelado e não será provisionado.',
     tone: 'inactive',
+    badgeClassName: 'status-pill-cancelled',
   },
   error: {
     label: 'Erro',
     hint: 'Encontramos uma falha e estamos tentando novamente.',
     tone: 'danger',
+    badgeClassName: 'status-pill-error',
+    ctaText: 'Tentar de novo',
   },
 };
 
