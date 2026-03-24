@@ -2,17 +2,19 @@
 gsd_state_version: 1.0
 milestone: v1.2
 milestone_name: Real Infra & Payments Integration
+current_phase: 8.1.1
+current_phase_name: Session persistence and email delivery fix
 current_plan: CHECKPOINT 2026-03-20 — cron GitHub Actions + eficiência
-status: checkpoint
-stopped_at: CHECKPOINT — cron externo, CRON_SECRET, hot path (reconcile=0)
-last_updated: "2026-03-20T12:00:00.000Z"
+status: Checkpoint + UAT pendente (8.1.1)
+stopped_at: Completed 12-01-PLAN.md
+last_updated: "2026-03-24T17:24:55.431Z"
 last_activity: 2026-03-20
 progress:
-  total_phases: 5
+  total_phases: 7
   completed_phases: 2
-  total_plans: 3
-  completed_plans: 3
-  percent: 100
+  total_plans: 8
+  completed_plans: 4
+  percent: 50
 ---
 
 [# Project State: Cloud Gaming VPS Brazil]
@@ -29,19 +31,23 @@ See: `.planning/PROJECT.md` (updated 2026-03-17)
 
 **Current Phase:** 8.1.1
 **Current Phase Name:** Session persistence and email delivery fix
-**Total Phases:** 11
+**Total Phases:** 12
 **Current Plan:** CHECKPOINT 2026-03-20 — cron GitHub Actions + eficiência
 **Total Plans in Phase:** 2
 **Status:** Checkpoint + UAT pendente (8.1.1)
 **Last Activity:** 2026-03-20
 **Last Activity Description:** Infra: CRON_SECRET, GitHub Actions (hot path + reconciliation), `reconcile=0`, `vercel.json` sem crons
-**Progress:** 100%
+**Progress:** [█████░░░░░] 50%
 
 **Shipped:**
 - v1.0 MVP — 5 phases, 15 plans (2026-03-17)
 - v1.1 Frontend Polish — 2 phases, 5 plans (2026-03-17)
 
 ## Accumulated Context
+
+### Roadmap Evolution
+
+- **2026-03-24 — Phase 12 added:** Frontend — checkout, pagamento PIX e UX. Próximo foco explícito: **alterações no front**; gateway Asaas validado em local; produção/hospedagem (ex.: Vercel) com limitações conhecidas até migração futura.
 
 - **2026-03-20 — Cron / deploy:** `CRON_SECRET` na Vercel + GitHub Actions; `src/lib/cron-auth.ts` (trim); `/api/cron?reconcile=0` para path quente (teardown + provisionamento) sem `listInstances` a cada run; reconciliação em workflow separado `cloudpc-reconciliation.yml` (*/30 min); `vercel.json` sem `crons` (fonte de agendamento = GitHub); `runReconciliation` ignora Vultr se `VULTR_API_KEY` ausente
 - Phase 8.1.1: Session + email fix — código no repo; ver `phases/08.1.1-session-persistence-and-email-delivery-fix/.continue-here.md`
@@ -57,6 +63,9 @@ See: `.planning/PROJECT.md` (updated 2026-03-17)
 | Infra 2026-03-20 | `GET /api/cron?reconcile=0` + job `/reconciliation` a cada 30 min | Menos `listInstances` por run; reconciliação separada |
 | Infra 2026-03-20 | `CRON_SECRET` trim + alinhar GitHub ↔ Vercel Production | Evitar 401 por whitespace |
 | 08.1.1 | Logout `<a>`, `autoJobCancelation: false` | Prefetch Next deslogava; deploys não cancelavam |
+- [Phase 12]: Centralizado contrato tipado PAYMENT_STATUS_UI + PRODUCTION_LIMITATION_MESSAGES para copy/status de pagamentos
+- [Phase 12]: Padronizado estilo checkout preto/roxo com classes globais dedicadas e status-pill-*
+- [Phase 12]: Motion ambiental decorativo desligado em prefers-reduced-motion via JS + fallback CSS
 
 ## Blockers
 
@@ -64,6 +73,6 @@ See: `.planning/PROJECT.md` (updated 2026-03-17)
 
 ## Session
 
-**Last Date:** 2026-03-20T12:00:00.000Z
-**Stopped At:** CHECKPOINT — cron GitHub Actions + eficiência (master `dd22ae6` área)
-**Resume File:** `.planning/phases/08.1.1-session-persistence-and-email-delivery-fix/.continue-here.md`
+**Last Date:** 2026-03-24T17:24:55.428Z
+**Stopped At:** Completed 12-01-PLAN.md
+**Resume File:** None
